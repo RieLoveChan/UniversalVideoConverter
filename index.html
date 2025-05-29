@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFMPEG Batch/Shell Script Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>FFMPEG Batch/Shell Script Generator</h1>
+    </header>
+
+    <section id="introduction">
+        <p>This tool helps you generate simple FFMPEG commands wrapped in batch (for Windows) or shell (for Linux/macOS) scripts. Fill in the parameters below to customize the FFMPEG command for your video conversion needs.</p>
+        <p><strong>Important:</strong> You must have FFMPEG installed and accessible in your system's PATH for these scripts to work. Download FFMPEG from <a href="https://ffmpeg.org/download.html" target="_blank">ffmpeg.org</a>.</p>
+    </section>
+
+    <section id="input-parameters">
+        <h2>Input Parameters</h2>
+        <form id="paramsForm">
+            <div>
+                <label for="inputFilePlaceholder">Input Video File (Placeholder Name):</label>
+                <input type="text" id="inputFilePlaceholder" value="input.mp4">
+                <small>This name will be used as a placeholder in the generated script. You'll replace it with your actual input file name when you run the script.</small>
+            </div>
+            <div>
+                <label for="outputFilePlaceholder">Output Video File (Placeholder Name):</label>
+                <input type="text" id="outputFilePlaceholder" value="output.mp4">
+                <small>This name will be used as a placeholder for the output file in the script.</small>
+            </div>
+            <div>
+                <label for="resolution">Resolution (e.g., 1280x720):</label>
+                <input type="text" id="resolution" placeholder="Leave blank for original">
+                <small>Optional. Example: 1920x1080. If left blank, FFMPEG will use the original resolution.</small>
+            </div>
+            <div>
+                <label for="videoCodec">Video Codec:</label>
+                <input type="text" id="videoCodec" value="libx264">
+                <small>Example: libx264 (for H.264), libvpx-vp9 (for VP9). Default is libx264.</small>
+            </div>
+            <div>
+                <label for="audioCodec">Audio Codec:</label>
+                <input type="text" id="audioCodec" value="aac">
+                <small>Example: aac, libopus. Default is aac.</small>
+            </div>
+            <div>
+                <label for="videoBitrate">Video Bitrate (e.g., 1M, 2000k):</label>
+                <input type="text" id="videoBitrate" placeholder="Leave blank for default">
+                <small>Optional. Example: 1M (for 1 Mbps), 500k (for 500 Kbps). If left blank, FFMPEG uses its defaults.</small>
+            </div>
+        </form>
+    </section>
+
+    <section id="actions">
+        <button type="button" id="generateBtn">Generate Scripts</button>
+    </section>
+
+    <section id="output-scripts">
+        <h2>Generated Scripts</h2>
+        <div class="script-output-container">
+            <div class="script-output-area" id="windows-script-area_"> <!-- id was windows-script-area -->
+                <h3>Windows Batch Script (.bat)</h3>
+                <p>Copy the text below and save it as a `.bat` file (e.g., `convert_video.bat`). Remember to replace placeholder file names with your actual file names before running.</p>
+                <textarea id="windowsScript" readonly rows="10" placeholder="Windows batch script will appear here..."></textarea>
+                <button type="button" id="copyWindowsBtn" class="copy-btn">Copy Windows Script</button>
+            </div>
+
+            <div class="script-output-area" id="linux-script-area_"> <!-- id was linux-script-area -->
+                <h3>Linux/macOS Shell Script (.sh)</h3>
+                <p>Copy the text below and save it as a `.sh` file (e.g., `convert_video.sh`). Make it executable with `chmod +x convert_video.sh`. Remember to replace placeholder file names.</p>
+                <textarea id="linuxScript" readonly rows="10" placeholder="Linux shell script will appear here..."></textarea>
+                <button type="button" id="copyLinuxBtn" class="copy-btn">Copy Linux Script</button>
+            </div>
+        </div>
+    </section>
+</div> <!-- End of .container -->
+    <script src="script.js"></script>
+</body>
+</html>
