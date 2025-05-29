@@ -1,0 +1,13 @@
+{
+  "test_preset1": {
+    "video_codec": "libx264_test",
+    "audio_codec": "aac_test",
+    "description": "Test preset 1"
+  },
+  "test_preset2": {
+    "resolution": "640x480",
+    "video_codec": "libvpx-vp9_test",
+    "bitrate": "500k",
+    "description": "Test preset 2"
+  }
+}
