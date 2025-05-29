@@ -8,9 +8,11 @@ The tool runs entirely in your web browser. No data is sent to any server, and n
 
 ## How to Use
 
+This tool is provided as a single `index.html` file that includes all necessary styles and scripts.
+
 1.  **Open the Tool:**
-    *   Download the project files (`index.html`, `style.css`, `script.js`).
-    *   Open the `index.html` file in a modern web browser (e.g., Chrome, Firefox, Edge, Safari).
+    *   Download the `index.html` file.
+    *   Open the downloaded `index.html` file in a modern web browser (e.g., Chrome, Firefox, Edge, Safari).
 
 2.  **Fill in Parameters:**
     *   In the "Input Parameters" section, fill in the fields:

@@ -4,7 +4,239 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FFMPEG Batch/Shell Script Generator</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+/* Global & Body */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    margin: 0; /* Remove default margin */
+    padding: 20px; /* Add padding to body instead of margin for full-width background */
+    line-height: 1.6;
+    background-color: #f0f2f5;
+    color: #1c1c1e;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: #ffffff;
+    padding: 20px 30px; /* Increased horizontal padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Headings */
+h1 {
+    text-align: center;
+    color: #1c1c1e; /* Adjusted for consistency */
+    font-weight: 600;
+    margin-bottom: 30px; /* More space below main title */
+}
+
+h2 { /* For main section titles like "Input Parameters", "Generated Scripts" */
+    font-weight: 500;
+    color: #1c1c1e;
+    border-bottom: 1px solid #e5e5ea;
+    padding-bottom: 10px; /* Increased from 8px */
+    margin-top: 30px;
+    margin-bottom: 25px; /* Increased from 20px */
+}
+
+.script-output-area h3 { /* For "Windows Batch Script (.bat)" etc. */
+    font-weight: 500;
+    color: #1c1c1e; /* Consistent heading color */
+    margin-top: 0;
+    margin-bottom: 15px; /* Space before paragraph */
+    font-size: 1.1em; /* Slightly smaller than h2 */
+}
+
+.mac-instructions h4 { /* For "Using the Shell Script on macOS" */
+    font-weight: 500;
+    color: #333; /* Kept as per prompt, slightly different for sub-section */
+    margin-top: 5px; /* Adjusted for spacing within details */
+    margin-bottom: 10px;
+}
+
+/* Form Elements */
+#paramsForm div {
+    margin-bottom: 20px; /* Increased spacing */
+}
+
+#paramsForm label {
+    display: block;
+    margin-bottom: 6px; /* Increased spacing */
+    font-weight: 500;
+    color: #333;
+}
+
+#paramsForm input[type="text"] {
+    width: calc(100% - 26px); /* Adjusted for 12px padding + 1px border on each side */
+    padding: 12px;
+    border: 1px solid #d1d1d6;
+    border-radius: 8px;
+    background-color: #f0f2f5; /* iOS-like input background */
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+#paramsForm input[type="text"]:focus {
+    border-color: #007aff;
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.25); /* Adjusted shadow for visibility */
+    outline: none;
+    background-color: #ffffff; /* Change background on focus for clarity */
+}
+
+#paramsForm small {
+    font-size: 0.85em; /* Slightly larger */
+    color: #6c757d;
+    display: block;
+    margin-top: 5px; /* Increased spacing */
+}
+
+/* Buttons */
+button {
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s; /* Added transform */
+    border: none;
+    text-align: center;
+}
+button:active {
+    transform: scale(0.98); /* Slight press effect */
+}
+
+
+#generateBtn {
+    background-color: #007aff;
+    color: white;
+    display: block; /* Make it block to center it */
+    margin: 25px auto 20px auto; /* Center button and add vertical margin */
+    min-width: 200px; /* Ensure a decent size */
+}
+
+#generateBtn:hover {
+    background-color: #005ecb;
+}
+
+button.copy-btn {
+    background-color: #e5e5ea;
+    color: #007aff;
+    border: 1px solid #d1d1d6; /* Subtle border */
+    padding: 8px 12px; /* Adjusted padding */
+    font-size: 0.9em;
+    margin-top: 8px; /* Space from textarea */
+    display: block; /* Take full width of its container if needed, or inline-block */
+    width: 100%; /* Make copy buttons take full width of their parent .script-output-area */
+    box-sizing: border-box;
+}
+
+button.copy-btn:hover {
+    background-color: #dcdce0; /* Slightly darker hover */
+}
+
+/* Text Areas */
+textarea {
+    width: calc(100% - 26px); /* Adjusted for 12px padding + 1px border on each side */
+    font-family: "SF Mono", "Menlo", "Consolas", "Courier New", monospace;
+    background-color: #f0f2f5; /* Consistent with input fields */
+    border: 1px solid #d1d1d6;
+    border-radius: 8px;
+    padding: 12px;
+    box-sizing: border-box;
+    margin-bottom: 8px; /* Space before copy button */
+    line-height: 1.5; /* Improved readability for code */
+}
+
+/* Script Output Sections */
+.script-output-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 25px; /* Increased gap */
+    margin-top: 25px;
+}
+
+.script-output-area {
+    flex: 1;
+    min-width: 0; /* Allow flex items to shrink below their content size if needed */
+    background-color: #ffffff; /* White background for each area */
+    padding: 20px; /* Increased padding */
+    border-radius: 10px; /* Consistent with container */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06); /* Softer shadow */
+}
+
+/* Collapsible Section (.mac-instructions) */
+.mac-instructions {
+    margin-top: 30px; /* Space above details section */
+    padding: 15px;
+    background-color: #f9f9f9; /* Slight background to differentiate */
+    border-radius: 8px;
+    border: 1px solid #e5e5ea;
+}
+.mac-instructions summary {
+    font-weight: 500;
+    color: #007aff;
+    cursor: pointer;
+    padding: 8px 0;
+    list-style-position: inside; /* Better alignment for marker if it was default */
+}
+.mac-instructions summary:hover {
+    text-decoration: underline;
+}
+.mac-instructions div { /* Content wrapper inside details */
+    padding: 10px 0 10px 25px; /* Increased left padding for indentation */
+    border-left: 2px solid #007aff; /* Changed border color to accent */
+    margin-left: 8px; /* Adjusted margin */
+    margin-top: 8px;
+}
+.mac-instructions ol {
+    padding-left: 20px; /* Standard padding for ol */
+}
+.mac-instructions ol li {
+    margin-bottom: 10px; /* Increased spacing */
+    line-height: 1.5;
+}
+.mac-instructions code { /* Style for <code> tags */
+    background-color: #e5e5ea;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: "SF Mono", "Menlo", "Consolas", "Courier New", monospace;
+}
+
+
+/* Links */
+a {
+    color: #007aff;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px 20px; /* Reduced padding for smaller screens */
+    }
+    .script-output-container {
+        flex-direction: column;
+        gap: 20px; /* Gap for stacked items */
+    }
+    #paramsForm input[type="text"], textarea, button.copy-btn {
+        width: 100%; /* Full width for these elements */
+    }
+    h1 {
+        font-size: 1.8em; /* Adjust main title size */
+    }
+    h2 {
+        font-size: 1.3em; /* Adjust section title size */
+    }
+    .script-output-area h3 {
+        font-size: 1.1em;
+    }
+}
+    </style>
 </head>
 <body>
 <div class="container">
@@ -92,6 +324,236 @@
     </details>
 
 </div> <!-- End of .container -->
-    <script src="script.js"></script>
+    <script>
+'use strict';
+
+document.addEventListener('DOMContentLoaded', () => {
+    // DOM Element Selection
+    const inputFileEl = document.getElementById('inputFilePlaceholder'); // Corrected ID based on HTML
+    const outputFileEl = document.getElementById('outputFilePlaceholder'); // Corrected ID based on HTML
+    const resolutionEl = document.getElementById('resolution');
+    const videoCodecEl = document.getElementById('videoCodec');
+    const audioCodecEl = document.getElementById('audioCodec');
+    const videoBitrateEl = document.getElementById('videoBitrate'); 
+    const generateBtn = document.getElementById('generateBtn');
+    const windowsScriptArea = document.getElementById('windowsScript'); 
+    const linuxScriptArea = document.getElementById('linuxScript');   
+    const copyWindowsBtn = document.getElementById('copyWindowsBtn');
+    const copyLinuxBtn = document.getElementById('copyLinuxBtn');
+
+    // Function to safely quote a filename if it contains spaces
+    function quoteFilename(filename) {
+        // For shell script generation, we might use more robust quoting like "'$(printf '%q' "$filename")'"
+        // but for simple display and direct ffmpeg command, simple double quotes are a common approach.
+        // If the filename already seems quoted, don't double quote. This is a simple check.
+        if (filename.includes(' ') && !filename.startsWith('"') && !filename.endsWith('"')) {
+            return `"${filename}"`;
+        }
+        return filename;
+    }
+    
+    // generateFfmpegCommand Function
+    function generateFfmpegCommand(params) {
+        const commandParts = ['ffmpeg', '-y']; // Start with ffmpeg and -y for overwrite
+
+        // Input file - always quote if it might have spaces
+        commandParts.push('-i', quoteFilename(params.inputFile));
+
+        if (params.resolution) {
+            commandParts.push('-s', params.resolution);
+        }
+        if (params.videoCodec) {
+            commandParts.push('-c:v', params.videoCodec);
+        }
+        // Provide default video codec if none is specified
+        else {
+            commandParts.push('-c:v', 'libx264'); 
+        }
+
+        if (params.audioCodec) {
+            commandParts.push('-c:a', params.audioCodec);
+        }
+        // Provide default audio codec if none is specified
+        else {
+            commandParts.push('-c:a', 'aac');
+        }
+
+        if (params.bitrate) {
+            commandParts.push('-b:v', params.bitrate);
+        }
+
+        // Output file - always quote if it might have spaces
+        commandParts.push(quoteFilename(params.outputFile));
+
+        return commandParts.join(' ');
+    }
+
+    // generateWindowsScript Function
+    function generateWindowsScript(ffmpegCommand, params) {
+        // Using template literals for multi-line string
+        const script = `@echo off
+REM FFMPEG Video Conversion Script generated by FFMPEG Script Generator
+REM Input File Placeholder: ${params.inputFile}
+REM Output File Placeholder: ${params.outputFile}
+
+echo.
+echo Starting video conversion...
+echo Input: ${params.inputFile}
+echo Output: ${params.outputFile}
+echo.
+
+${ffmpegCommand}
+
+echo.
+echo Conversion process finished.
+echo Check for errors above.
+echo.
+pause
+`;
+        return script;
+    }
+
+    // generateLinuxScript Function
+    function generateLinuxScript(ffmpegCommand, params) {
+        // Using template literals for multi-line string
+        const script = `#!/bin/bash
+# FFMPEG Video Conversion Script generated by FFMPEG Script Generator
+# Input File Placeholder: ${params.inputFile}
+# Output File Placeholder: ${params.outputFile}
+
+echo ""
+echo "Starting video conversion..."
+echo "Input: ${params.inputFile}"
+echo "Output: ${params.outputFile}"
+echo ""
+
+${ffmpegCommand}
+
+echo ""
+echo "Conversion process finished."
+echo "Check for errors above."
+`;
+        return script;
+    }
+
+    function copyToClipboard(textareaId, buttonId) {
+        const textarea = document.getElementById(textareaId);
+        const button = document.getElementById(buttonId);
+
+        if (!textarea || !button) {
+            console.error("Error: Textarea or button not found for copy operation.", textareaId, buttonId);
+            alert('Error setting up copy functionality.');
+            return;
+        }
+
+        if (!navigator.clipboard) {
+            alert('Clipboard API not available in your browser. Please copy manually.');
+            // Fallback for older browsers (select text)
+            textarea.select();
+            document.execCommand('copy'); // Deprecated, but a fallback
+            button.textContent = 'Selected!'; // Indicate selection for manual copy
+            setTimeout(() => {
+                button.textContent = buttonId === 'copyWindowsBtn' ? 'Copy Windows Script' : 'Copy Linux Script';
+            }, 3000);
+            return;
+        }
+
+        navigator.clipboard.writeText(textarea.value)
+            .then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.disabled = true; // Disable button briefly
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                }, 2000); // Revert after 2 seconds
+            })
+            .catch(err => {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy text. See console for details. Please copy manually.');
+                // Fallback for cases where writeText might fail (e.g. if not in secure context)
+                textarea.select();
+                document.execCommand('copy');
+                button.textContent = 'Selected!'; 
+                setTimeout(() => {
+                    button.textContent = buttonId === 'copyWindowsBtn' ? 'Copy Windows Script' : 'Copy Linux Script';
+                }, 3000);
+            });
+    }
+
+
+    // Event Listener for "Generate Scripts" Button
+    if (generateBtn) {
+        generateBtn.addEventListener('click', handleGenerateScripts);
+    } else {
+        console.error("Error: Generate button not found. Check generateBtn ID.");
+    }
+
+    // Event Listeners for Copy Buttons
+    if (copyWindowsBtn) {
+        copyWindowsBtn.addEventListener('click', () => copyToClipboard('windowsScript', 'copyWindowsBtn'));
+    } else {
+        console.error("Error: Copy Windows button not found. Check copyWindowsBtn ID.");
+    }
+
+    if (copyLinuxBtn) {
+        copyLinuxBtn.addEventListener('click', () => copyToClipboard('linuxScript', 'copyLinuxBtn'));
+    } else {
+        console.error("Error: Copy Linux button not found. Check copyLinuxBtn ID.");
+    }
+
+    // handleGenerateScripts Function
+    function handleGenerateScripts() {
+        // Retrieve values from input fields
+        const inputFileVal = inputFileEl.value.trim();
+        const outputFileVal = outputFileEl.value.trim();
+        const resolutionVal = resolutionEl.value.trim();
+        const videoCodecVal = videoCodecEl.value.trim();
+        const audioCodecVal = audioCodecEl.value.trim();
+        const bitrateVal = videoBitrateEl.value.trim();
+
+        // Basic Validation
+        if (!inputFileVal) {
+            alert("Input File Placeholder Name cannot be empty.");
+            return;
+        }
+        if (!outputFileVal) {
+            alert("Output File Placeholder Name cannot be empty.");
+            return;
+        }
+
+        // Store gathered values in an object
+        const params = {
+            inputFile: inputFileVal,
+            outputFile: outputFileVal,
+            resolution: resolutionVal,
+            videoCodec: videoCodecVal, // This could be empty if user clears it
+            audioCodec: audioCodecVal, // This could be empty if user clears it
+            bitrate: bitrateVal
+        };
+
+        // Log collected parameters
+        console.log("Collected Parameters:", params);
+
+        // Generate FFMPEG command
+        const ffmpegCommand = generateFfmpegCommand(params);
+        console.log("Generated FFMPEG Command:", ffmpegCommand);
+
+        // Generate Windows Batch Script
+        const windowsBatchScript = generateWindowsScript(ffmpegCommand, params);
+        
+        // Generate Linux Shell Script
+        const linuxShellScript = generateLinuxScript(ffmpegCommand, params);
+
+        // Update textareas
+        if (windowsScriptArea && linuxScriptArea) {
+            windowsScriptArea.value = windowsBatchScript;
+            linuxScriptArea.value = linuxShellScript;
+        } else {
+            console.error("Error: Script output textareas not found. Check element IDs.");
+        }
+    }
+});
+    </script>
 </body>
 </html>
