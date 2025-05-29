@@ -42,6 +42,7 @@ The tool runs entirely in your web browser. No data is sent to any server, and n
         ```bash
         chmod +x convert_video.sh
         ```
+        Detailed instructions for macOS users, including Terminal commands and notes on installing FFMPEG via Homebrew, are available in the collapsible "▶ Instructions for macOS Users" section directly within the application.
 
 8.  **Prepare Files & Run:**
     *   The generated scripts use the placeholder filenames you entered in the form.
@@ -66,6 +67,7 @@ The tool runs entirely in your web browser. No data is sent to any server, and n
 *   Quotes filenames in the FFMPEG command to handle spaces.
 *   "Copy to Clipboard" functionality for easy retrieval of the generated scripts.
 *   Responsive user interface design for usability on different screen sizes.
+*   Includes a collapsible section with specific instructions for macOS users (Terminal usage, Homebrew for FFMPEG).
 *   Fully client-side: operates entirely within the browser, ensuring privacy as no data is sent to any server.
 
 ## Notes & Limitations
