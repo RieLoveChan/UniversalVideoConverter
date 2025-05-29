@@ -12,7 +12,7 @@ body {
     padding: 20px; /* Add padding to body instead of margin for full-width background */
     line-height: 1.6;
     background-color: #f0f2f5;
-    color: #1c1c1e;
+    color: #333333; /* Softer dark gray for body text */
 }
 
 .container {
@@ -27,49 +27,53 @@ body {
 /* Headings */
 h1 {
     text-align: center;
-    color: #1c1c1e; /* Adjusted for consistency */
+    color: #1D1D1F; /* Specific dark color for main heading */
     font-weight: 600;
     margin-bottom: 30px; /* More space below main title */
 }
 
 h2 { /* For main section titles like "Input Parameters", "Generated Scripts" */
     font-weight: 500;
-    color: #1c1c1e;
+    color: #333333; /* Softer dark gray */
     border-bottom: 1px solid #e5e5ea;
-    padding-bottom: 10px; /* Increased from 8px */
+    padding-bottom: 10px; 
     margin-top: 30px;
-    margin-bottom: 25px; /* Increased from 20px */
+    margin-bottom: 25px; 
 }
 
 .script-output-area h3 { /* For "Windows Batch Script (.bat)" etc. */
     font-weight: 500;
-    color: #1c1c1e; /* Consistent heading color */
+    color: #333333; /* Softer dark gray */
     margin-top: 0;
-    margin-bottom: 15px; /* Space before paragraph */
-    font-size: 1.1em; /* Slightly smaller than h2 */
+    margin-bottom: 15px; 
+    font-size: 1.1em; 
 }
 
 .mac-instructions h4 { /* For "Using the Shell Script on macOS" */
     font-weight: 500;
-    color: #333; /* Kept as per prompt, slightly different for sub-section */
-    margin-top: 5px; /* Adjusted for spacing within details */
+    color: #333333; /* Consistent softer dark gray */
+    margin-top: 5px; 
     margin-bottom: 10px;
+}
+
+/* General Paragraph and Label Text */
+p, #paramsForm label {
+    color: #555555; /* Mid-gray for readability */
 }
 
 /* Form Elements */
 #paramsForm div {
-    margin-bottom: 20px; /* Increased spacing */
+    margin-bottom: 20px; 
 }
 
 #paramsForm label {
     display: block;
-    margin-bottom: 6px; /* Increased spacing */
-    font-weight: 500;
-    color: #333;
+    margin-bottom: 6px; 
+    font-weight: 500; /* Already set, but confirming */
 }
 
 #paramsForm input[type="text"] {
-    width: calc(100% - 26px); /* Adjusted for 12px padding + 1px border on each side */
+    width: calc(100% - 26px); 
     padding: 12px;
     border: 1px solid #d1d1d6;
     border-radius: 8px;
@@ -80,16 +84,16 @@ h2 { /* For main section titles like "Input Parameters", "Generated Scripts" */
 
 #paramsForm input[type="text"]:focus {
     border-color: #007aff;
-    box-shadow: 0 0 0 3px rgba(0,122,255,0.25); /* Adjusted shadow for visibility */
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.25); 
     outline: none;
-    background-color: #ffffff; /* Change background on focus for clarity */
+    background-color: #ffffff; 
 }
 
 #paramsForm small {
-    font-size: 0.85em; /* Slightly larger */
-    color: #6c757d;
+    font-size: 0.85em; 
+    color: #6D6D6D; /* Slightly adjusted mid-gray for small text */
     display: block;
-    margin-top: 5px; /* Increased spacing */
+    margin-top: 5px; 
 }
 
 /* Buttons */
@@ -253,16 +257,6 @@ a:hover {
         <h2>Input Parameters</h2>
         <form id="paramsForm">
             <div>
-                <label for="inputFilePlaceholder">Input Video File (Placeholder Name):</label>
-                <input type="text" id="inputFilePlaceholder" value="input.mp4">
-                <small>This name will be used as a placeholder in the generated script. You'll replace it with your actual input file name when you run the script.</small>
-            </div>
-            <div>
-                <label for="outputFilePlaceholder">Output Video File (Placeholder Name):</label>
-                <input type="text" id="outputFilePlaceholder" value="output.mp4">
-                <small>This name will be used as a placeholder for the output file in the script.</small>
-            </div>
-            <div>
                 <label for="resolution">Resolution (e.g., 1280x720):</label>
                 <input type="text" id="resolution" placeholder="Leave blank for original">
                 <small>Optional. Example: 1920x1080. If left blank, FFMPEG will use the original resolution.</small>
@@ -286,7 +280,7 @@ a:hover {
     </section>
 
     <section id="actions">
-        <button type="button" id="generateBtn">Generate Scripts</button>
+        <button type="button" id="generateBtn">⚙️ Generate Scripts</button>
     </section>
 
     <section id="output-scripts">
@@ -296,20 +290,20 @@ a:hover {
                 <h3>Windows Batch Script (.bat)</h3>
                 <p>Copy the text below and save it as a `.bat` file (e.g., `convert_video.bat`). Remember to replace placeholder file names with your actual file names before running.</p>
                 <textarea id="windowsScript" readonly rows="10" placeholder="Windows batch script will appear here..."></textarea>
-                <button type="button" id="copyWindowsBtn" class="copy-btn">Copy Windows Script</button>
+                <button type="button" id="copyWindowsBtn" class="copy-btn">📄 Copy Windows Script</button>
             </div>
 
             <div class="script-output-area" id="linux-script-area_"> <!-- id was linux-script-area -->
                 <h3>Linux/macOS Shell Script (.sh)</h3>
                 <p>Copy the text below and save it as a `.sh` file (e.g., `convert_video.sh`). Make it executable with `chmod +x convert_video.sh`. Remember to replace placeholder file names.</p>
                 <textarea id="linuxScript" readonly rows="10" placeholder="Linux shell script will appear here..."></textarea>
-                <button type="button" id="copyLinuxBtn" class="copy-btn">Copy Linux Script</button>
+                <button type="button" id="copyLinuxBtn" class="copy-btn">📄 Copy Linux Script</button>
             </div>
         </div>
     </section>
 
     <details class="mac-instructions">
-        <summary>▶ Instructions for macOS Users</summary>
+        <summary>ℹ️ Instructions for macOS Users</summary>
         <div>
             <h4>Using the Shell Script on macOS</h4>
             <p>The Linux Shell Script (.sh file) generated above is also suitable for macOS users. Here’s how to use it:</p>
@@ -329,8 +323,8 @@ a:hover {
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Element Selection
-    const inputFileEl = document.getElementById('inputFilePlaceholder'); // Corrected ID based on HTML
-    const outputFileEl = document.getElementById('outputFilePlaceholder'); // Corrected ID based on HTML
+    // const inputFileEl = document.getElementById('inputFilePlaceholder'); // Removed
+    // const outputFileEl = document.getElementById('outputFilePlaceholder'); // Removed
     const resolutionEl = document.getElementById('resolution');
     const videoCodecEl = document.getElementById('videoCodec');
     const audioCodecEl = document.getElementById('audioCodec');
@@ -341,23 +335,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyWindowsBtn = document.getElementById('copyWindowsBtn');
     const copyLinuxBtn = document.getElementById('copyLinuxBtn');
 
-    // Function to safely quote a filename if it contains spaces
-    function quoteFilename(filename) {
-        // For shell script generation, we might use more robust quoting like "'$(printf '%q' "$filename")'"
-        // but for simple display and direct ffmpeg command, simple double quotes are a common approach.
-        // If the filename already seems quoted, don't double quote. This is a simple check.
-        if (filename.includes(' ') && !filename.startsWith('"') && !filename.endsWith('"')) {
-            return `"${filename}"`;
-        }
-        return filename;
-    }
+    // quoteFilename function is removed as placeholders are fixed strings.
     
     // generateFfmpegCommand Function
     function generateFfmpegCommand(params) {
         const commandParts = ['ffmpeg', '-y']; // Start with ffmpeg and -y for overwrite
 
-        // Input file - always quote if it might have spaces
-        commandParts.push('-i', quoteFilename(params.inputFile));
+        // Use fixed placeholders for input and output files
+        commandParts.push('-i', '"$INPUT_FILE"');
 
         if (params.resolution) {
             commandParts.push('-s', params.resolution);
@@ -382,56 +367,145 @@ document.addEventListener('DOMContentLoaded', () => {
             commandParts.push('-b:v', params.bitrate);
         }
 
-        // Output file - always quote if it might have spaces
-        commandParts.push(quoteFilename(params.outputFile));
+        // Output file - use fixed placeholder
+        commandParts.push('"$OUTPUT_FILE_REENCODED"');
 
         return commandParts.join(' ');
     }
 
     // generateWindowsScript Function
-    function generateWindowsScript(ffmpegCommand, params) {
-        // Using template literals for multi-line string
+    function generateWindowsScript(ffmpegCommandWithPlaceholders, params) {
+        // Using template literals for multi-line string.
+        // Note: The batch script uses !VAR! for delayed expansion, and %%A for loop variables.
+        // The placeholders "$INPUT_FILE$" and "$OUTPUT_FILE_REENCODED$" (with quotes) are literal strings
+        // that will be present in ffmpegCommandWithPlaceholders and then replaced inside the batch script.
         const script = `@echo off
-REM FFMPEG Video Conversion Script generated by FFMPEG Script Generator
-REM Input File Placeholder: ${params.inputFile}
-REM Output File Placeholder: ${params.outputFile}
+REM This script processes files dragged onto it.
+REM It re-encodes them using FFMPEG with the specified parameters,
+REM adding "_reencoded" to the original filename.
 
-echo.
-echo Starting video conversion...
-echo Input: ${params.inputFile}
-echo Output: ${params.outputFile}
-echo.
+SETLOCAL ENABLEDELAYEDEXPANSION
 
-${ffmpegCommand}
+REM Loop through all files dragged onto the script
+FOR %%A IN (%*) DO (
+    echo Processing file: "%%~A"
 
-echo.
-echo Conversion process finished.
-echo Check for errors above.
-echo.
+    REM Get filename components
+    SET "INPUT_FILE_PATH=%%~A"
+    SET "BASENAME=%%~nA"
+    SET "EXTENSION=%%~xA"
+
+    REM Construct output filename
+    SET "OUTPUT_FILENAME=!BASENAME!_reencoded!EXTENSION!"
+
+    echo Output will be: "!OUTPUT_FILENAME!"
+
+    REM Prepare the FFMPEG command for the current file
+    SET "ACTUAL_FFMPEG_COMMAND=${ffmpegCommandWithPlaceholders}"
+    
+    REM Replace the "$INPUT_FILE" placeholder.
+    SET "CMD_TEMP=!ACTUAL_FFMPEG_COMMAND:"$INPUT_FILE"="%%~A"!"
+    REM Replace the "$OUTPUT_FILE_REENCODED" placeholder.
+    SET "FINAL_CMD=!CMD_TEMP:"$OUTPUT_FILE_REENCODED"="!OUTPUT_FILENAME!"!"
+    
+    REM Execute FFMPEG
+    echo Running: !FINAL_CMD!
+    !FINAL_CMD!
+
+    echo.
+)
+
+echo All files processed.
 pause
 `;
         return script;
     }
 
     // generateLinuxScript Function
-    function generateLinuxScript(ffmpegCommand, params) {
-        // Using template literals for multi-line string
+    function generateLinuxScript(ffmpegCommandWithPlaceholders, params) {
+        // Escape backticks and other special characters for JavaScript template literal
+        const escapedFfmpegCommand = ffmpegCommandWithPlaceholders.replace(/`/g, '\\`');
+
         const script = `#!/bin/bash
-# FFMPEG Video Conversion Script generated by FFMPEG Script Generator
-# Input File Placeholder: ${params.inputFile}
-# Output File Placeholder: ${params.outputFile}
+# This script processes files provided as arguments.
+# It re-encodes them using FFMPEG with the specified parameters,
+# adding "_reencoded" to the original filename.
 
-echo ""
-echo "Starting video conversion..."
-echo "Input: ${params.inputFile}"
-echo "Output: ${params.outputFile}"
-echo ""
+if [ "$#" -eq 0 ]; then
+    echo "No files provided. Please drag and drop files onto the script (if your environment supports it for .sh files) or provide them as arguments in the terminal."
+    echo "Usage: ./your_script_name.sh file1.mp4 file2.mkv ..."
+    exit 1
+fi
 
-${ffmpegCommand}
+for file in "$@"; do
+    echo "Processing file: \\"$file\\"" # Escaped quotes for JS
 
-echo ""
-echo "Conversion process finished."
-echo "Check for errors above."
+    # Get filename components
+    FILENAME_WITH_EXT="\${file##*/}"                      # Get filename with extension (e.g., video.mp4)
+    EXTENSION_PART="\${FILENAME_WITH_EXT##*.}"             # Get extension part (e.g., mp4)
+    FILENAME_NO_EXT="\${FILENAME_WITH_EXT%.*}"            # Get filename without extension part (e.g., video)
+
+    # Determine actual base name and extension for output construction
+    OUTPUT_BASENAME=""
+    OUTPUT_EXTENSION_WITH_DOT="" # Will include the dot if there's an extension
+
+    if [[ "$FILENAME_WITH_EXT" == "$EXTENSION_PART" ]]; then # Filename has no dot (no extension) or is a dotfile like .config
+        if [[ "$FILENAME_WITH_EXT" == .* ]]; then # It's a dotfile like .config (FILENAME_NO_EXT would be empty)
+            OUTPUT_BASENAME="$FILENAME_WITH_EXT" # e.g. .config
+        else # No extension like 'myfile'
+            OUTPUT_BASENAME="$FILENAME_WITH_EXT" # e.g. myfile
+        fi
+    elif [[ "$FILENAME_NO_EXT" == "" ]]; then # Filename starts with a dot and has an extension (e.g., .config.old -> EXTENSION_PART=old, FILENAME_NO_EXT=.config)
+         OUTPUT_BASENAME="$FILENAME_WITH_EXT" # Treat as if no extension for suffixing, e.g. .config.old_reencoded
+    else # Common case: filename.extension
+        OUTPUT_BASENAME="$FILENAME_NO_EXT"
+        OUTPUT_EXTENSION_WITH_DOT=".$EXTENSION_PART"
+    fi
+    
+    # Construct output filename
+    OUTPUT_FILENAME="\${OUTPUT_BASENAME}_reencoded\${OUTPUT_EXTENSION_WITH_DOT}"
+    
+    # If input and output names are identical (e.g. processing a "_reencoded" file by mistake), skip or warn.
+    if [[ "$file" == "$OUTPUT_FILENAME" ]]; then
+        echo "Skipping file because input and output names would be identical: $file"
+        continue
+    fi
+
+    echo "Output will be: \\"$OUTPUT_FILENAME\\"" # Escaped quotes for JS
+
+    # Prepare the FFMPEG command for the current file.
+    # The placeholders in ffmpegCommandWithPlaceholders are "$INPUT_FILE" and "$OUTPUT_FILE_REENCODED" (literally)
+    
+    # Safely prepare variables for sed replacement.
+    # This handles spaces, newlines, and sed special characters in filenames.
+    INPUT_FILE_SAFE_FOR_SED=$(printf '%s\\n' "$file" | sed 's:[\\/&]:\\\\&:g;$!s/$/\\\\n/') 
+    INPUT_FILE_SAFE_FOR_SED="\${INPUT_FILE_SAFE_FOR_SED//$'\\n'/\\n}" 
+    OUTPUT_FILENAME_SAFE_FOR_SED=$(printf '%s\\n' "$OUTPUT_FILENAME" | sed 's:[\\/&]:\\\\&:g;$!s/$/\\\\n/')
+    OUTPUT_FILENAME_SAFE_FOR_SED="\${OUTPUT_FILENAME_SAFE_FOR_SED//$'\\n'/\\n}"
+
+    # The command template itself might contain characters that sed interprets.
+    # However, we are replacing fixed placeholder strings, so we only need to escape the placeholders for sed.
+    FFMPEG_COMMAND_TEMPLATE="${escapedFfmpegCommand}"
+
+    # Define placeholders as they appear in FFMPEG_COMMAND_TEMPLATE
+    # These are literal strings "$INPUT_FILE" and "$OUTPUT_FILE_REENCODED"
+    # We need to escape them for the sed 'find' pattern.
+    # \$ for shell, then \\\$ for sed to see literal $
+    # Quotes need to be matched: \\" for shell, then \\\\\\" for sed to see literal "
+    PLACEHOLDER_IN_SED_FIND="\\\"\\\\\\$INPUT_FILE\\\\\\\""
+    PLACEHOLDER_OUT_SED_FIND="\\\"\\\\\\$OUTPUT_FILE_REENCODED\\\\\\\""
+    
+    # Substitute placeholders with the prepared safe filenames
+    # Using % as delimiter for sed to avoid issues if filenames contain /
+    CURRENT_FFMPEG_COMMAND=$(echo "$FFMPEG_COMMAND_TEMPLATE" | sed "s%${PLACEHOLDER_IN_SED_FIND}%\\"$INPUT_FILE_SAFE_FOR_SED\\"%g" | sed "s%${PLACEHOLDER_OUT_SED_FIND}%\\"$OUTPUT_FILENAME_SAFE_FOR_SED\\"%g")
+
+    echo "Running: $CURRENT_FFMPEG_COMMAND"
+    eval "$CURRENT_FFMPEG_COMMAND" # Using eval to correctly process quotes and expansions
+
+    echo ""
+done
+
+echo "All files processed."
 `;
         return script;
     }
@@ -439,6 +513,16 @@ echo "Check for errors above."
     function copyToClipboard(textareaId, buttonId) {
         const textarea = document.getElementById(textareaId);
         const button = document.getElementById(buttonId);
+        const icon = '📄'; // Using page icon for copy
+
+        // Determine original button text based on ID (could also store original text in a data attribute)
+        let originalButtonText = "";
+        if (buttonId === 'copyWindowsBtn') {
+            originalButtonText = `${icon} Copy Windows Script`;
+        } else if (buttonId === 'copyLinuxBtn') {
+            originalButtonText = `${icon} Copy Linux Script`;
+        }
+
 
         if (!textarea || !button) {
             console.error("Error: Textarea or button not found for copy operation.", textareaId, buttonId);
@@ -448,35 +532,40 @@ echo "Check for errors above."
 
         if (!navigator.clipboard) {
             alert('Clipboard API not available in your browser. Please copy manually.');
-            // Fallback for older browsers (select text)
             textarea.select();
-            document.execCommand('copy'); // Deprecated, but a fallback
-            button.textContent = 'Selected!'; // Indicate selection for manual copy
+            try {
+                document.execCommand('copy');
+                button.textContent = `${icon} Selected! (manual copy)`;
+            } catch (e) {
+                button.textContent = `${icon} Error selecting!`;
+            }
             setTimeout(() => {
-                button.textContent = buttonId === 'copyWindowsBtn' ? 'Copy Windows Script' : 'Copy Linux Script';
+                button.textContent = originalButtonText;
             }, 3000);
             return;
         }
 
         navigator.clipboard.writeText(textarea.value)
             .then(() => {
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                button.disabled = true; // Disable button briefly
+                button.textContent = `${icon} Copied!`;
+                button.disabled = true;
                 setTimeout(() => {
-                    button.textContent = originalText;
+                    button.textContent = originalButtonText;
                     button.disabled = false;
-                }, 2000); // Revert after 2 seconds
+                }, 2000); 
             })
             .catch(err => {
                 console.error('Failed to copy text: ', err);
                 alert('Failed to copy text. See console for details. Please copy manually.');
-                // Fallback for cases where writeText might fail (e.g. if not in secure context)
                 textarea.select();
-                document.execCommand('copy');
-                button.textContent = 'Selected!'; 
+                try {
+                    document.execCommand('copy');
+                    button.textContent = `${icon} Selected! (manual copy)`;
+                } catch (e) {
+                    button.textContent = `${icon} Error selecting!`;
+                }
                 setTimeout(() => {
-                    button.textContent = buttonId === 'copyWindowsBtn' ? 'Copy Windows Script' : 'Copy Linux Script';
+                    button.textContent = originalButtonText;
                 }, 3000);
             });
     }
@@ -505,27 +594,19 @@ echo "Check for errors above."
     // handleGenerateScripts Function
     function handleGenerateScripts() {
         // Retrieve values from input fields
-        const inputFileVal = inputFileEl.value.trim();
-        const outputFileVal = outputFileEl.value.trim();
+        // const inputFileVal = inputFileEl.value.trim(); // Removed
+        // const outputFileVal = outputFileEl.value.trim(); // Removed
         const resolutionVal = resolutionEl.value.trim();
         const videoCodecVal = videoCodecEl.value.trim();
         const audioCodecVal = audioCodecEl.value.trim();
         const bitrateVal = videoBitrateEl.value.trim();
 
-        // Basic Validation
-        if (!inputFileVal) {
-            alert("Input File Placeholder Name cannot be empty.");
-            return;
-        }
-        if (!outputFileVal) {
-            alert("Output File Placeholder Name cannot be empty.");
-            return;
-        }
+        // Basic Validation - Removed for inputFileVal and outputFileVal
 
         // Store gathered values in an object
         const params = {
-            inputFile: inputFileVal,
-            outputFile: outputFileVal,
+            // inputFile: inputFileVal, // Removed
+            // outputFile: outputFileVal, // Removed
             resolution: resolutionVal,
             videoCodec: videoCodecVal, // This could be empty if user clears it
             audioCodec: audioCodecVal, // This could be empty if user clears it

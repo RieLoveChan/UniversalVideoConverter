@@ -14,17 +14,16 @@ This tool is provided as a single `index.html` file that includes all necessary 
     *   Download the `index.html` file.
     *   Open the downloaded `index.html` file in a modern web browser (e.g., Chrome, Firefox, Edge, Safari).
 
-2.  **Fill in Parameters:**
-    *   In the "Input Parameters" section, fill in the fields:
-        *   **Input Video File (Placeholder Name):** The name you want to use as a placeholder for your input file in the script (e.g., `my_video.mp4`).
-        *   **Output Video File (Placeholder Name):** The name for the output file placeholder (e.g., `converted_video.mkv`).
-        *   **Resolution (Optional):** Desired output resolution like `1280x720`. Leave blank to use the original.
-        *   **Video Codec (Optional):** Specify a video codec (e.g., `libx264`, `libvpx-vp9`). Defaults to `libx264`.
-        *   **Audio Codec (Optional):** Specify an audio codec (e.g., `aac`, `libopus`). Defaults to `aac`.
-        *   **Video Bitrate (Optional):** Set a video bitrate like `1M` (1 Mbps) or `2000k` (2000 Kbps). Leave blank for FFMPEG's default.
+2.  **Set Conversion Parameters:**
+    *   In the "Input Parameters" section, configure the desired video conversion settings:
+        *   **Resolution (Optional):** e.g., `1280x720`. Leave blank to use the original.
+        *   **Video Codec (Optional):** e.g., `libx264`, `libvpx-vp9`. Defaults to `libx264`.
+        *   **Audio Codec (Optional):** e.g., `aac`, `libopus`. Defaults to `aac`.
+        *   **Video Bitrate (Optional):** e.g., `1M` (for 1 Mbps), `2000k` (for 2000 Kbps). Leave blank for FFMPEG's default.
+    *   Note: Specific input and output filenames are not set here; the generated scripts are designed to process files provided at runtime.
 
 3.  **Generate Scripts:**
-    *   Click the "Generate Scripts" button.
+    *   Click the "⚙️ Generate Scripts" button.
 
 4.  **View Scripts:**
     *   The generated Windows Batch and Linux/macOS Shell script text will appear in their respective textareas.
@@ -44,16 +43,22 @@ This tool is provided as a single `index.html` file that includes all necessary 
         ```bash
         chmod +x convert_video.sh
         ```
-        Detailed instructions for macOS users, including Terminal commands and notes on installing FFMPEG via Homebrew, are available in the collapsible "▶ Instructions for macOS Users" section directly within the application.
+        Detailed instructions for macOS users, including Terminal commands and notes on installing FFMPEG via Homebrew, are available in the collapsible "ℹ️ Instructions for macOS Users" section directly within the application.
 
 8.  **Prepare Files & Run:**
-    *   The generated scripts use the placeholder filenames you entered in the form.
-    *   **Option 1 (Recommended):** Rename your actual input video file to match the "Input Video File (Placeholder Name)" you used in the form (e.g., rename your video to `my_video.mp4` if that was your placeholder).
-    *   **Option 2:** Alternatively, edit the script file you saved and replace the placeholder names directly within the script with your actual filenames.
-    *   Place the script in the same directory as your input video file. If your video file is elsewhere, you'll need to adjust the paths in the script.
-    *   Run the script from your command line or terminal:
-        *   Windows: `convert_video.bat` (or double-click it)
-        *   Linux/macOS: `./convert_video.sh`
+    *   Place the generated script (`.bat` or `.sh`) in a convenient directory.
+    *   **For Windows (.bat script):**
+        *   Drag and drop one or more video files directly onto the `.bat` script icon.
+        *   The script will process each file, creating an output file with `_reencoded` appended to its original name in the same directory as the input file.
+    *   **For Linux/macOS (.sh script):**
+        *   Open your Terminal.
+        *   Navigate to the directory containing the `.sh` script.
+        *   Provide the video files you want to convert as command-line arguments to the script. For example:
+            ```bash
+            ./convert_video.sh /path/to/your/video1.mp4 /another/path/video2.mkv "video with spaces.avi"
+            ```
+        *   You can often drag files from Finder (macOS) or your file manager (Linux) directly into the Terminal window after typing the script name and a space, which will paste their full paths.
+        *   The script will process each file, creating an output file with `_reencoded` appended to its original name in the same directory as its respective input file.
 
 ## Prerequisites (for the generated scripts to work)
 
@@ -63,21 +68,27 @@ This tool is provided as a single `index.html` file that includes all necessary 
 ## Features
 
 *   Generates FFMPEG command scripts for Windows Batch (`.bat`) and Linux/macOS Shell (`.sh`) environments.
-*   Customizable FFMPEG parameters: input/output file placeholders, resolution, video codec, audio codec, and video bitrate.
+*   Batch processing: Handles multiple files via drag-and-drop (Windows) or command-line arguments (Linux/macOS).
+*   Automatic output naming: Output files are automatically named by appending `_reencoded` to the original filename (e.g., `video.mp4` becomes `video_reencoded.mp4`).
+*   Customizable FFMPEG conversion parameters: resolution, video codec, audio codec, and video bitrate.
 *   Applies default video (`libx264`) and audio (`aac`) codecs if not specified by the user.
-*   Automatically includes `-y` in the FFMPEG command to overwrite output files without prompting.
-*   Quotes filenames in the FFMPEG command to handle spaces.
+*   Automatically includes `-y` in the FFMPEG command to overwrite output files without prompting (if an output file with the `_reencoded` name already exists).
 *   "Copy to Clipboard" functionality for easy retrieval of the generated scripts.
-*   Responsive user interface design for usability on different screen sizes.
+*   Enhanced iOS-inspired UI with refined text colors and descriptive icons.
 *   Includes a collapsible section with specific instructions for macOS users (Terminal usage, Homebrew for FFMPEG).
 *   Fully client-side: operates entirely within the browser, ensuring privacy as no data is sent to any server.
+
+## Output Files and Naming
+
+*   Output files are saved in the **same directory** as their respective original input files.
+*   The script appends an `_reencoded` suffix to the original filename before the extension. For example, if you process `myVideo.mp4`, the output will be `myVideo_reencoded.mp4`.
+*   If a file named `originalName_reencoded.extension` already exists in the source directory, FFMPEG (due to the `-y` flag in the command) will **overwrite it without prompting**. Be mindful of this if re-running scripts on files that have already been processed or if you have other files that coincidentally match this naming pattern.
 
 ## Notes & Limitations
 
 *   **Script Generator, Not a Converter:** This tool *generates script text*. It does not execute FFMPEG or perform any video conversion itself. You need to run the generated script on your local machine.
 *   **FFMPEG Dependency:** The functionality of the generated scripts is entirely dependent on a correct FFMPEG installation on the user's system.
 *   **Parameter Accuracy:** The success of the FFMPEG conversion depends on the validity and compatibility of the parameters chosen by the user.
-*   **File Placeholders:** The script uses the exact placeholder names you provide in the form. You must ensure these align with your actual file names when you run the script, or modify the script manually.
 *   **Error Handling in Scripts:** The generated scripts are basic and include simple `echo` statements. FFMPEG itself will output detailed error messages to the console if it encounters issues during conversion.
 
 ---
