@@ -655,6 +655,38 @@ body {
                 </div>
 
                 <div class="form-group">
+                    <label for="presetOption" class="form-label">Preset</label>
+                    <select id="presetOption" class="form-select">
+                        <option value="ultrafast">Ultrafast</option>
+                        <option value="superfast">Superfast</option>
+                        <option value="veryfast">Veryfast</option>
+                        <option value="faster">Faster</option>
+                        <option value="fast">Fast</option>
+                        <option value="medium">Medium</option>
+                        <option value="slow">Slow</option>
+                        <option value="slower">Slower</option>
+                        <option value="veryslow" selected>Veryslow</option>
+                    </select>
+                    <small class="form-help">Controls encoding speed vs. compression. `veryslow` offers best compression but is slowest.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="pixelFormatOption" class="form-label">Pixel Format</label>
+                    <select id="pixelFormatOption" class="form-select">
+                        <option value="yuv420p" selected>YUV 4:2:0 (yuv420p)</option>
+                        <option value="yuv422p">YUV 4:2:2 (yuv422p)</option>
+                        <option value="yuv444p">YUV 4:4:4 (yuv444p)</option>
+                        <option value="nv12">NV12</option>
+                        <option value="nv16">NV16</option>
+                        <option value="nv21">NV21</option>
+                        <option value="gray">Grayscale (gray)</option>
+                        <option value="rgb24">RGB 24-bit (rgb24)</option>
+                        <option value="gbrp">GBRP (Planar RGB)</option>
+                    </select>
+                    <small class="form-help">Sets the pixel format. `yuv420p` is widely compatible for web and general use.</small>
+                </div>
+
+                <div class="form-group">
                     <label for="videoBitrate" class="form-label">Video Bitrate</label>
                     <input type="text" id="videoBitrate" class="form-input" placeholder="e.g., 2M, 1500k">
                     <small class="form-help">Optional. Leave blank for automatic. Examples: 2M (2 Mbps), 1500k (1.5 Mbps), 500k</small>
@@ -719,7 +751,9 @@ body {
             const videoCodecEl = document.getElementById('videoCodec');
             const videoCodecSelectEl = document.getElementById('videoCodecSelect');
             const audioCodecEl = document.getElementById('audioCodec');
-            const crfEl = document.getElementById('crfValue'); // Added CRF element
+            const crfEl = document.getElementById('crfValue');
+            const presetEl = document.getElementById('presetOption');
+            const pixelFormatEl = document.getElementById('pixelFormatOption');
             const videoBitrateEl = document.getElementById('videoBitrate');
             const generateBtn = document.getElementById('generateBtn');
             const btnText = document.getElementById('btnText');
@@ -763,6 +797,16 @@ body {
                     commandParts.push('-crf', params.crf);
                 } else if (params.bitrate) {
                     commandParts.push('-b:v', params.bitrate);
+                }
+
+                // Add preset if selected
+                if (params.preset) {
+                    commandParts.push('-preset', params.preset);
+                }
+
+                // Add pixel format if selected
+                if (params.pixelFormat) {
+                    commandParts.push('-pix_fmt', params.pixelFormat);
                 }
 
                 commandParts.push('"$OUTPUT_FILE_REENCODED"');
@@ -1009,8 +1053,10 @@ echo`;
                        resolution: resolutionEl.value.trim(),
                        videoCodec: videoCodecEl.value.trim(),
                        audioCodec: audioCodecEl.value.trim(),
-                       bitrate: videoBitrateEl.value.trim(),
-                       crf: crfEl.value.trim() // Added CRF value
+                       crf: crfEl.value.trim(),
+                       preset: presetEl.value,
+                       pixelFormat: pixelFormatEl.value,
+                       bitrate: videoBitrateEl.value.trim()
                    };
 
                    console.log('Parameters:', params);
@@ -1075,7 +1121,7 @@ echo`;
            });
 
            // Form validation and real-time feedback
-           const inputs = [resolutionEl, videoCodecEl, audioCodecEl, crfEl, videoBitrateEl]; // Added crfEl
+           const inputs = [resolutionEl, videoCodecEl, audioCodecEl, crfEl, presetEl, pixelFormatEl, videoBitrateEl];
            inputs.forEach(input => {
                if (input) {
                    input.addEventListener('input', (e) => {
