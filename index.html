@@ -701,10 +701,54 @@ body {
                 </div>
 
                 <div class="form-group">
-                    <label for="videoBitrate" class="form-label">Video Bitrate</label>
-                    <input type="text" id="videoBitrate" class="form-input" placeholder="e.g., 18k, 2M">
-                    <small class="form-help">Optional. Leave blank for automatic. Examples: 2M (2 Mbps), 1500k (1.5 Mbps), 500k</small>
+                    <label for="levelOption" class="form-label">Level</label>
+                    <select id="levelOption" class="form-select">
+                        <option value="">(auto)</option>
+                        <option value="1.0">1.0</option>
+                        <option value="1.1">1.1</option>
+                        <option value="1.2">1.2</option>
+                        <option value="1.3">1.3</option>
+                        <option value="2.0">2.0</option>
+                        <option value="2.1">2.1</option>
+                        <option value="2.2">2.2</option>
+                        <option value="3.0">3.0</option>
+                        <option value="3.1">3.1</option>
+                        <option value="3.2">3.2</option>
+                        <option value="4.0">4.0</option>
+                        <option value="4.1">4.1</option>
+                        <option value="4.2" selected>4.2</option>
+                        <option value="5.0">5.0</option>
+                        <option value="5.1">5.1</option>
+                        <option value="5.2">5.2</option>
+                        <option value="6.0">6.0</option>
+                        <option value="6.1">6.1</option>
+                        <option value="6.2">6.2</option>
+                    </select>
+                    <small class="form-help">Sets the codec level (e.g., for H.264/H.265). `(auto)` lets FFMPEG choose. May impact compatibility with older devices.</small>
                 </div>
+
+                <div class="form-group">
+                    <label for="bfOption" class="form-label">B-frames (bf)</label>
+                    <select id="bfOption" class="form-select">
+                        <option value="">(auto)</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="8">8</option>
+                        <option value="16">16</option>
+                    </select>
+                    <small class="form-help">Maximum number of consecutive B-frames. `(auto)` for codec default. Affects compression and compatibility.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="gopSizeOption" class="form-label">GOP size (g)</label>
+                    <input type="number" id="gopSizeOption" class="form-input" value="60" min="0" placeholder="e.g., 60">
+                    <small class="form-help">Keyframe interval (Group of Pictures size). Leave empty or 0 for FFMPEG/codec default. Higher values can improve compression but may affect seeking.</small>
+                </div>
+
             </form>
             
             <button type="button" id="generateBtn" class="btn-primary">
@@ -769,7 +813,9 @@ body {
             const presetEl = document.getElementById('presetOption');
             const pixelFormatEl = document.getElementById('pixelFormatOption');
             const videoProfileEl = document.getElementById('videoProfileOption');
-            const videoBitrateEl = document.getElementById('videoBitrate');
+            const levelEl = document.getElementById('levelOption');
+            const bfEl = document.getElementById('bfOption');
+            const gopSizeEl = document.getElementById('gopSizeOption');
             const generateBtn = document.getElementById('generateBtn');
             const btnText = document.getElementById('btnText');
             const windowsScriptArea = document.getElementById('windowsScript');
@@ -807,11 +853,9 @@ body {
                 commandParts.push('-c:v', params.videoCodec || 'libx264');
                 commandParts.push('-c:a', params.audioCodec || 'aac');
 
-                // Prioritize CRF over bitrate
+                // Add CRF if provided and is a number
                 if (params.crf && !isNaN(parseFloat(params.crf))) {
                     commandParts.push('-crf', params.crf);
-                } else if (params.bitrate) {
-                    commandParts.push('-b:v', params.bitrate);
                 }
 
                 // Add preset if selected
@@ -827,6 +871,21 @@ body {
                 // Add video profile if selected
                 if (params.videoProfile) { // An empty string value from "(auto)" will be falsy
                     commandParts.push('-profile:v', params.videoProfile);
+                }
+
+                // Add Level if selected
+                if (params.level) { // Empty string from "(auto)" is falsy
+                    commandParts.push('-level', params.level);
+                }
+
+                // Add B-frames if selected
+                if (params.bf) { // Empty string from "(auto)" is falsy
+                    commandParts.push('-bf', params.bf);
+                }
+
+                // Add GOP size if provided and a positive number
+                if (params.gopSize && !isNaN(parseFloat(params.gopSize)) && parseFloat(params.gopSize) > 0) {
+                    commandParts.push('-g', params.gopSize);
                 }
 
                 commandParts.push('"$OUTPUT_FILE_REENCODED"');
@@ -1077,7 +1136,9 @@ echo`;
                        preset: presetEl.value,
                        pixelFormat: pixelFormatEl.value,
                        videoProfile: videoProfileEl.value,
-                       bitrate: videoBitrateEl.value.trim()
+                       level: levelEl.value,
+                       bf: bfEl.value,
+                       gopSize: gopSizeEl.value.trim()
                    };
 
                    console.log('Parameters:', params);
@@ -1142,7 +1203,7 @@ echo`;
            });
 
            // Form validation and real-time feedback
-           const inputs = [resolutionEl, videoCodecEl, audioCodecEl, crfEl, presetEl, pixelFormatEl, videoProfileEl, videoBitrateEl];
+           const inputs = [resolutionEl, videoCodecEl, audioCodecEl, crfEl, presetEl, pixelFormatEl, videoProfileEl, levelEl, bfEl, gopSizeEl];
            inputs.forEach(input => {
                if (input) {
                    input.addEventListener('input', (e) => {
