@@ -687,6 +687,20 @@ body {
                 </div>
 
                 <div class="form-group">
+                    <label for="videoProfileOption" class="form-label">Video Profile</label>
+                    <select id="videoProfileOption" class="form-select">
+                        <option value="baseline">Baseline</option>
+                        <option value="main">Main</option>
+                        <option value="high" selected>High</option>
+                        <option value="high10">High10</option>
+                        <option value="high422">High422</option>
+                        <option value="high444">High444</option>
+                        <option value="">(auto)</option>
+                    </select>
+                    <small class="form-help">Sets the video profile (e.g., for H.264/H.265). `(auto)` lets FFMPEG choose. Some profiles may only apply to specific codecs.</small>
+                </div>
+
+                <div class="form-group">
                     <label for="videoBitrate" class="form-label">Video Bitrate</label>
                     <input type="text" id="videoBitrate" class="form-input" placeholder="e.g., 18k, 2M">
                     <small class="form-help">Optional. Leave blank for automatic. Examples: 2M (2 Mbps), 1500k (1.5 Mbps), 500k</small>
@@ -754,6 +768,7 @@ body {
             const crfEl = document.getElementById('crfValue');
             const presetEl = document.getElementById('presetOption');
             const pixelFormatEl = document.getElementById('pixelFormatOption');
+            const videoProfileEl = document.getElementById('videoProfileOption');
             const videoBitrateEl = document.getElementById('videoBitrate');
             const generateBtn = document.getElementById('generateBtn');
             const btnText = document.getElementById('btnText');
@@ -807,6 +822,11 @@ body {
                 // Add pixel format if selected
                 if (params.pixelFormat) {
                     commandParts.push('-pix_fmt', params.pixelFormat);
+                }
+
+                // Add video profile if selected
+                if (params.videoProfile) { // An empty string value from "(auto)" will be falsy
+                    commandParts.push('-profile:v', params.videoProfile);
                 }
 
                 commandParts.push('"$OUTPUT_FILE_REENCODED"');
@@ -1056,6 +1076,7 @@ echo`;
                        crf: crfEl.value.trim(),
                        preset: presetEl.value,
                        pixelFormat: pixelFormatEl.value,
+                       videoProfile: videoProfileEl.value,
                        bitrate: videoBitrateEl.value.trim()
                    };
 
@@ -1121,7 +1142,7 @@ echo`;
            });
 
            // Form validation and real-time feedback
-           const inputs = [resolutionEl, videoCodecEl, audioCodecEl, crfEl, presetEl, pixelFormatEl, videoBitrateEl];
+           const inputs = [resolutionEl, videoCodecEl, audioCodecEl, crfEl, presetEl, pixelFormatEl, videoProfileEl, videoBitrateEl];
            inputs.forEach(input => {
                if (input) {
                    input.addEventListener('input', (e) => {
