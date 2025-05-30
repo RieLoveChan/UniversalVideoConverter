@@ -90,6 +90,3 @@ This tool is provided as a single `index.html` file that includes all necessary 
 *   **FFMPEG Dependency:** The functionality of the generated scripts is entirely dependent on a correct FFMPEG installation on the user's system.
 *   **Parameter Accuracy:** The success of the FFMPEG conversion depends on the validity and compatibility of the parameters chosen by the user.
 *   **Error Handling in Scripts:** The generated scripts are basic and include simple `echo` statements. FFMPEG itself will output detailed error messages to the console if it encounters issues during conversion.
-
----
-*This README replaces information about any previous Python CLI tool that might have existed in this repository.*
