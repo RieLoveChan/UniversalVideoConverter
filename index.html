@@ -649,6 +649,12 @@ body {
                 </div>
                 
                 <div class="form-group">
+                    <label for="crfValue" class="form-label">CRF (Constant Rate Factor)</label>
+                    <input type="number" id="crfValue" class="form-input" placeholder="e.g., 18" value="18">
+                    <small class="form-help">0-51 (H.264/H.265), lower is better quality. Overrides Video Bitrate if set.</small>
+                </div>
+
+                <div class="form-group">
                     <label for="videoBitrate" class="form-label">Video Bitrate</label>
                     <input type="text" id="videoBitrate" class="form-input" placeholder="e.g., 2M, 1500k">
                     <small class="form-help">Optional. Leave blank for automatic. Examples: 2M (2 Mbps), 1500k (1.5 Mbps), 500k</small>
@@ -713,6 +719,7 @@ body {
             const videoCodecEl = document.getElementById('videoCodec');
             const videoCodecSelectEl = document.getElementById('videoCodecSelect');
             const audioCodecEl = document.getElementById('audioCodec');
+            const crfEl = document.getElementById('crfValue'); // Added CRF element
             const videoBitrateEl = document.getElementById('videoBitrate');
             const generateBtn = document.getElementById('generateBtn');
             const btnText = document.getElementById('btnText');
@@ -751,7 +758,10 @@ body {
                 commandParts.push('-c:v', params.videoCodec || 'libx264');
                 commandParts.push('-c:a', params.audioCodec || 'aac');
 
-                if (params.bitrate) {
+                // Prioritize CRF over bitrate
+                if (params.crf && !isNaN(parseFloat(params.crf))) {
+                    commandParts.push('-crf', params.crf);
+                } else if (params.bitrate) {
                     commandParts.push('-b:v', params.bitrate);
                 }
 
@@ -999,7 +1009,8 @@ echo`;
                        resolution: resolutionEl.value.trim(),
                        videoCodec: videoCodecEl.value.trim(),
                        audioCodec: audioCodecEl.value.trim(),
-                       bitrate: videoBitrateEl.value.trim()
+                       bitrate: videoBitrateEl.value.trim(),
+                       crf: crfEl.value.trim() // Added CRF value
                    };
 
                    console.log('Parameters:', params);
@@ -1064,7 +1075,7 @@ echo`;
            });
 
            // Form validation and real-time feedback
-           const inputs = [resolutionEl, videoCodecEl, audioCodecEl, videoBitrateEl];
+           const inputs = [resolutionEl, videoCodecEl, audioCodecEl, crfEl, videoBitrateEl]; // Added crfEl
            inputs.forEach(input => {
                if (input) {
                    input.addEventListener('input', (e) => {
