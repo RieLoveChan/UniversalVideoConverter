@@ -5,636 +5,1014 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FFMPEG Batch/Shell Script Generator</title>
     <style>
-/* Global & Body */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-    margin: 0; /* Remove default margin */
-    padding: 20px; /* Add padding to body instead of margin for full-width background */
-    line-height: 1.6;
-    background-color: #f0f2f5;
-    color: #333333; /* Softer dark gray for body text */
+/* Apple-inspired Design System */
+:root {
+    --apple-black: #1d1d1f;
+    --apple-gray-1: #86868b;
+    --apple-gray-2: #515154;
+    --apple-gray-3: #424245;
+    --apple-gray-4: #2c2c2e;
+    --apple-gray-5: #1c1c1e;
+    --apple-gray-6: #f5f5f7;
+    --apple-white: #ffffff;
+    --apple-blue: #007aff;
+    --apple-blue-dark: #0056b3;
+    --apple-green: #30d158;
+    --apple-surface: rgba(255, 255, 255, 0.8);
+    --apple-surface-dark: rgba(28, 28, 30, 0.8);
+    
+    /* Spacing system */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    --spacing-3xl: 64px;
+    
+    /* Border radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.12);
 }
 
-.container {
-    max-width: 900px;
-    margin: auto;
-    background: #ffffff;
-    padding: 20px 30px; /* Increased horizontal padding */
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-/* Headings */
-h1 {
-    text-align: center;
-    color: #1D1D1F; /* Specific dark color for main heading */
-    font-weight: 600;
-    margin-bottom: 30px; /* More space below main title */
-}
-
-h2 { /* For main section titles like "Input Parameters", "Generated Scripts" */
-    font-weight: 500;
-    color: #333333; /* Softer dark gray */
-    border-bottom: 1px solid #e5e5ea;
-    padding-bottom: 10px; 
-    margin-top: 30px;
-    margin-bottom: 25px; 
-}
-
-.script-output-area h3 { /* For "Windows Batch Script (.bat)" etc. */
-    font-weight: 500;
-    color: #333333; /* Softer dark gray */
-    margin-top: 0;
-    margin-bottom: 15px; 
-    font-size: 1.1em; 
-}
-
-.mac-instructions h4 { /* For "Using the Shell Script on macOS" */
-    font-weight: 500;
-    color: #333333; /* Consistent softer dark gray */
-    margin-top: 5px; 
-    margin-bottom: 10px;
-}
-
-/* General Paragraph and Label Text */
-p, #paramsForm label {
-    color: #555555; /* Mid-gray for readability */
-}
-
-/* Form Elements */
-#paramsForm div {
-    margin-bottom: 20px; 
-}
-
-#paramsForm label {
-    display: block;
-    margin-bottom: 6px; 
-    font-weight: 500; /* Already set, but confirming */
-}
-
-#paramsForm input[type="text"] {
-    width: calc(100% - 26px); 
-    padding: 12px;
-    border: 1px solid #d1d1d6;
-    border-radius: 8px;
-    background-color: #f0f2f5; /* iOS-like input background */
-    transition: border-color 0.2s, box-shadow 0.2s;
+/* Global Reset & Base */
+* {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-#paramsForm input[type="text"]:focus {
-    border-color: #007aff;
-    box-shadow: 0 0 0 3px rgba(0,122,255,0.25); 
-    outline: none;
-    background-color: #ffffff; 
+html {
+    scroll-behavior: smooth;
 }
 
-#paramsForm small {
-    font-size: 0.85em; 
-    color: #6D6D6D; /* Slightly adjusted mid-gray for small text */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, var(--apple-gray-6) 0%, #ffffff 100%);
+    color: var(--apple-black);
+    line-height: 1.5;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Container */
+.container {
+    max-width: 1020px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    position: relative;
+    z-index: 1;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: var(--spacing-3xl) 0;
+    margin-bottom: var(--spacing-2xl);
+    background: radial-gradient(circle at center, rgba(0, 122, 255, 0.03) 0%, transparent 70%);
+    border-radius: var(--radius-xl);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(134,134,139,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+    animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-10px, -10px); }
+}
+
+.hero h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--apple-black);
+    margin-bottom: var(--spacing-md);
+    position: relative;
+    z-index: 1;
+}
+
+.hero .subtitle {
+    font-size: 1.375rem;
+    font-weight: 400;
+    color: var(--apple-gray-1);
+    max-width: 600px;
+    margin: 0 auto var(--spacing-lg);
+    position: relative;
+    z-index: 1;
+}
+
+.hero .description {
+    font-size: 1.125rem;
+    color: var(--apple-gray-2);
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.hero .ffmpeg-link {
+    color: var(--apple-blue);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.hero .ffmpeg-link:hover {
+    color: var(--apple-blue-dark);
+    text-decoration: underline;
+}
+
+/* Section Cards */
+.section-card {
+    background: var(--apple-surface);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.section-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+}
+
+.section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--apple-black);
+    margin-bottom: var(--spacing-lg);
+    letter-spacing: -0.02em;
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: var(--spacing-lg);
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-label {
     display: block;
-    margin-top: 5px; 
-}
-
-/* Buttons */
-button {
-    border-radius: 8px;
-    padding: 12px 18px;
     font-size: 1rem;
     font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s; /* Added transform */
-    border: none;
-    text-align: center;
-}
-button:active {
-    transform: scale(0.98); /* Slight press effect */
+    color: var(--apple-black);
+    margin-bottom: var(--spacing-xs);
+    transition: color 0.2s ease;
 }
 
-
-#generateBtn {
-    background-color: #007aff;
-    color: white;
-    display: block; /* Make it block to center it */
-    margin: 25px auto 20px auto; /* Center button and add vertical margin */
-    min-width: 200px; /* Ensure a decent size */
+.form-input {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 2px solid rgba(134, 134, 139, 0.2);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--apple-black);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    backdrop-filter: blur(10px);
 }
 
-#generateBtn:hover {
-    background-color: #005ecb;
+.form-input:focus {
+    border-color: var(--apple-blue);
+    background: var(--apple-white);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+    transform: scale(1.01);
 }
 
-button.copy-btn {
-    background-color: #e5e5ea;
-    color: #007aff;
-    border: 1px solid #d1d1d6; /* Subtle border */
-    padding: 8px 12px; /* Adjusted padding */
-    font-size: 0.9em;
-    margin-top: 8px; /* Space from textarea */
-    display: block; /* Take full width of its container if needed, or inline-block */
-    width: 100%; /* Make copy buttons take full width of their parent .script-output-area */
-    box-sizing: border-box;
+.form-input::placeholder {
+    color: var(--apple-gray-1);
 }
 
-button.copy-btn:hover {
-    background-color: #dcdce0; /* Slightly darker hover */
+.form-help {
+    font-size: 0.875rem;
+    color: var(--apple-gray-1);
+    margin-top: var(--spacing-xs);
+    line-height: 1.4;
 }
 
-/* Text Areas */
-textarea {
-    width: calc(100% - 26px); /* Adjusted for 12px padding + 1px border on each side */
-    font-family: "SF Mono", "Menlo", "Consolas", "Courier New", monospace;
-    background-color: #f0f2f5; /* Consistent with input fields */
-    border: 1px solid #d1d1d6;
-    border-radius: 8px;
-    padding: 12px;
-    box-sizing: border-box;
-    margin-bottom: 8px; /* Space before copy button */
-    line-height: 1.5; /* Improved readability for code */
-}
-
-/* Script Output Sections */
-.script-output-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 25px; /* Increased gap */
-    margin-top: 25px;
-}
-
-.script-output-area {
-    flex: 1;
-    min-width: 0; /* Allow flex items to shrink below their content size if needed */
-    background-color: #ffffff; /* White background for each area */
-    padding: 20px; /* Increased padding */
-    border-radius: 10px; /* Consistent with container */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06); /* Softer shadow */
-}
-
-/* Collapsible Section (.mac-instructions) */
-.mac-instructions {
-    margin-top: 30px; /* Space above details section */
-    padding: 15px;
-    background-color: #f9f9f9; /* Slight background to differentiate */
-    border-radius: 8px;
-    border: 1px solid #e5e5ea;
-}
-.mac-instructions summary {
+/* Button Styling */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 1.125rem;
     font-weight: 500;
-    color: #007aff;
+    color: var(--apple-white);
+    background: linear-gradient(135deg, var(--apple-blue) 0%, #0056b3 100%);
+    border: none;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    padding: 8px 0;
-    list-style-position: inside; /* Better alignment for marker if it was default */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    margin: var(--spacing-xl) auto;
+    min-width: 200px;
 }
-.mac-instructions summary:hover {
-    text-decoration: underline;
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
 }
-.mac-instructions div { /* Content wrapper inside details */
-    padding: 10px 0 10px 25px; /* Increased left padding for indentation */
-    border-left: 2px solid #007aff; /* Changed border color to accent */
-    margin-left: 8px; /* Adjusted margin */
-    margin-top: 8px;
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
-.mac-instructions ol {
-    padding-left: 20px; /* Standard padding for ol */
+
+.btn-primary:hover::before {
+    left: 100%;
 }
-.mac-instructions ol li {
-    margin-bottom: 10px; /* Increased spacing */
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--apple-blue);
+    background: rgba(0, 122, 255, 0.08);
+    border: 1px solid rgba(0, 122, 255, 0.2);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: var(--spacing-md);
+}
+
+.btn-secondary:hover {
+    background: rgba(0, 122, 255, 0.12);
+    border-color: rgba(0, 122, 255, 0.3);
+}
+
+/* Script Output */
+.script-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.script-output {
+    background: var(--apple-surface);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    animation: slideInUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.script-output:nth-child(1) { animation-delay: 0.1s; }
+.script-output:nth-child(2) { animation-delay: 0.2s; }
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.script-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--apple-black);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.script-description {
+    font-size: 0.95rem;
+    color: var(--apple-gray-2);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.4;
+}
+
+.script-textarea {
+    width: 100%;
+    height: 300px;
+    padding: var(--spacing-md);
+    border: 1px solid rgba(134, 134, 139, 0.2);
+    border-radius: var(--radius-sm);
+    background: rgba(28, 28, 30, 0.95);
+    color: var(--apple-green);
+    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.script-textarea:focus {
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+/* Instructions Collapsible */
+.instructions {
+    margin-top: var(--spacing-xl);
+    border: 1px solid rgba(134, 134, 139, 0.2);
+    border-radius: var(--radius-lg);
+    background: var(--apple-surface);
+    backdrop-filter: blur(20px) saturate(180%);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.instructions[open] {
+    box-shadow: var(--shadow-md);
+}
+
+.instructions summary {
+    padding: var(--spacing-lg);
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--apple-blue);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.instructions summary:hover {
+    background: rgba(0, 122, 255, 0.05);
+}
+
+.instructions summary::-webkit-details-marker {
+    display: none;
+}
+
+.instructions-content {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    border-top: 1px solid rgba(134, 134, 139, 0.1);
+    animation: expandContent 0.3s ease forwards;
+}
+
+@keyframes expandContent {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.instructions h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--apple-black);
+    margin-bottom: var(--spacing-md);
+}
+
+.instructions ol {
+    padding-left: var(--spacing-lg);
+    color: var(--apple-gray-2);
+}
+
+.instructions li {
+    margin-bottom: var(--spacing-sm);
     line-height: 1.5;
 }
-.mac-instructions code { /* Style for <code> tags */
-    background-color: #e5e5ea;
-    padding: 2px 5px;
+
+.instructions code {
+    background: rgba(134, 134, 139, 0.15);
+    padding: 2px 6px;
     border-radius: 4px;
-    font-family: "SF Mono", "Menlo", "Consolas", "Courier New", monospace;
+    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+    font-size: 0.875rem;
+    color: var(--apple-black);
 }
 
-
-/* Links */
-a {
-    color: #007aff;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
+/* Loading Animation */
+.loading {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
 }
 
-/* Responsive adjustments */
+.loading-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.loading-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: loadingDot 1.5s ease-in-out infinite;
+}
+
+.loading-dot:nth-child(1) { animation-delay: 0s; }
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes loadingDot {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+}
+
+/* Success Animation */
+.success {
+    color: var(--apple-green);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     .container {
-        padding: 15px 20px; /* Reduced padding for smaller screens */
+        padding: var(--spacing-md);
     }
-    .script-output-container {
-        flex-direction: column;
-        gap: 20px; /* Gap for stacked items */
+    
+    .hero {
+        padding: var(--spacing-xl) 0;
     }
-    #paramsForm input[type="text"], textarea, button.copy-btn {
-        width: 100%; /* Full width for these elements */
+    
+    .hero h1 {
+        font-size: 2.5rem;
     }
-    h1 {
-        font-size: 1.8em; /* Adjust main title size */
+    
+    .script-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
     }
-    h2 {
-        font-size: 1.3em; /* Adjust section title size */
+    
+    .section-card {
+        padding: var(--spacing-lg);
     }
-    .script-output-area h3 {
-        font-size: 1.1em;
+    
+    .btn-primary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero .subtitle {
+        font-size: 1.125rem;
+    }
+    
+    .script-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --apple-surface: rgba(28, 28, 30, 0.8);
+        --apple-gray-6: #1c1c1e;
+    }
+    
+    body {
+        background: linear-gradient(135deg, var(--apple-gray-5) 0%, var(--apple-gray-4) 100%);
+        color: var(--apple-white);
+    }
+    
+    .hero h1,
+    .section-title,
+    .form-label {
+        color: var(--apple-white);
     }
 }
     </style>
 </head>
 <body>
-<div class="container">
-    <header>
-        <h1>FFMPEG Batch/Shell Script Generator</h1>
-    </header>
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>FFMPEG Script Generator</h1>
+            <p class="subtitle">Designed to be powerful.</p>
+            <p class="description">
+                Create professional batch and shell scripts for video conversion with ease. 
+                Simply configure your parameters and get ready-to-use scripts for Windows and macOS/Linux.
+                <br><br>
+                <strong>Requirements:</strong> FFMPEG must be installed and accessible in your system's PATH. 
+                Download from <a href="https://ffmpeg.org/download.html" target="_blank" class="ffmpeg-link">ffmpeg.org</a>.
+            </p>
+        </section>
 
-    <section id="introduction">
-        <p>This tool helps you generate simple FFMPEG commands wrapped in batch (for Windows) or shell (for Linux/macOS) scripts. Fill in the parameters below to customize the FFMPEG command for your video conversion needs.</p>
-        <p><strong>Important:</strong> You must have FFMPEG installed and accessible in your system's PATH for these scripts to work. Download FFMPEG from <a href="https://ffmpeg.org/download.html" target="_blank">ffmpeg.org</a>.</p>
-    </section>
+        <!-- Input Parameters -->
+        <section class="section-card">
+            <h2 class="section-title">Configure Parameters</h2>
+            <form id="paramsForm">
+                <div class="form-group">
+                    <label for="resolution" class="form-label">Resolution</label>
+                    <input type="text" id="resolution" class="form-input" placeholder="e.g., 1920x1080">
+                    <small class="form-help">Optional. Leave blank to keep original resolution. Examples: 1920x1080, 1280x720, 3840x2160</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="videoCodec" class="form-label">Video Codec</label>
+                    <input type="text" id="videoCodec" class="form-input" value="libx264">
+                    <small class="form-help">Video encoder to use. Examples: libx264 (H.264), libx265 (H.265), libvpx-vp9 (VP9)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="audioCodec" class="form-label">Audio Codec</label>
+                    <input type="text" id="audioCodec" class="form-input" value="aac">
+                    <small class="form-help">Audio encoder to use. Examples: aac, libopus, libmp3lame</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="videoBitrate" class="form-label">Video Bitrate</label>
+                    <input type="text" id="videoBitrate" class="form-input" placeholder="e.g., 2M, 1500k">
+                    <small class="form-help">Optional. Leave blank for automatic. Examples: 2M (2 Mbps), 1500k (1.5 Mbps), 500k</small>
+                </div>
+            </form>
+            
+            <button type="button" id="generateBtn" class="btn-primary">
+                <span id="btnText">⚙️ Generate Scripts</span>
+            </button>
+        </section>
 
-    <section id="input-parameters">
-        <h2>Input Parameters</h2>
-        <form id="paramsForm">
-            <div>
-                <label for="resolution">Resolution (e.g., 1280x720):</label>
-                <input type="text" id="resolution" placeholder="Leave blank for original">
-                <small>Optional. Example: 1920x1080. If left blank, FFMPEG will use the original resolution.</small>
+        <!-- Generated Scripts -->
+        <section class="section-card" id="scriptsSection" style="display: none;">
+            <h2 class="section-title">Generated Scripts</h2>
+            <div class="script-grid">
+                <div class="script-output">
+                    <h3 class="script-title">🪟 Windows Batch Script</h3>
+                    <p class="script-description">
+                        Save as <code>.bat</code> file (e.g., <code>convert_video.bat</code>). 
+                        Drag and drop video files onto the script to convert them.
+                    </p>
+                    <textarea id="windowsScript" class="script-textarea" readonly placeholder="Windows batch script will appear here..."></textarea>
+                    <button type="button" id="copyWindowsBtn" class="btn-secondary">📄 Copy Windows Script</button>
+                </div>
+
+                <div class="script-output">
+                    <h3 class="script-title">🐧 Linux/macOS Shell Script</h3>
+                    <p class="script-description">
+                        Save as <code>.sh</code> file (e.g., <code>convert_video.sh</code>). 
+                        Make executable with <code>chmod +x convert_video.sh</code>.
+                    </p>
+                    <textarea id="linuxScript" class="script-textarea" readonly placeholder="Linux/macOS shell script will appear here..."></textarea>
+                    <button type="button" id="copyLinuxBtn" class="btn-secondary">📄 Copy Linux Script</button>
+                </div>
             </div>
-            <div>
-                <label for="videoCodec">Video Codec:</label>
-                <input type="text" id="videoCodec" value="libx264">
-                <small>Example: libx264 (for H.264), libvpx-vp9 (for VP9). Default is libx264.</small>
-            </div>
-            <div>
-                <label for="audioCodec">Audio Codec:</label>
-                <input type="text" id="audioCodec" value="aac">
-                <small>Example: aac, libopus. Default is aac.</small>
-            </div>
-            <div>
-                <label for="videoBitrate">Video Bitrate (e.g., 1M, 2000k):</label>
-                <input type="text" id="videoBitrate" placeholder="Leave blank for default">
-                <small>Optional. Example: 1M (for 1 Mbps), 500k (for 500 Kbps). If left blank, FFMPEG uses its defaults.</small>
-            </div>
-        </form>
-    </section>
+        </section>
 
-    <section id="actions">
-        <button type="button" id="generateBtn">⚙️ Generate Scripts</button>
-    </section>
-
-    <section id="output-scripts">
-        <h2>Generated Scripts</h2>
-        <div class="script-output-container">
-            <div class="script-output-area" id="windows-script-area_"> <!-- id was windows-script-area -->
-                <h3>Windows Batch Script (.bat)</h3>
-                <p>Copy the text below and save it as a `.bat` file (e.g., `convert_video.bat`). Remember to replace placeholder file names with your actual file names before running.</p>
-                <textarea id="windowsScript" readonly rows="10" placeholder="Windows batch script will appear here..."></textarea>
-                <button type="button" id="copyWindowsBtn" class="copy-btn">📄 Copy Windows Script</button>
+        <!-- Instructions -->
+        <details class="instructions">
+            <summary>ℹ️ Detailed Instructions for macOS Users</summary>
+            <div class="instructions-content">
+                <h4>Using Shell Scripts on macOS</h4>
+                <p>The Linux Shell Script generated above works perfectly on macOS. Follow these steps:</p>
+                <ol>
+                    <li>Open <strong>Terminal</strong> (found in <code>/Applications/Utilities/</code> or search with Spotlight)</li>
+                    <li>Navigate to your script's location: <code>cd ~/Downloads</code></li>
+                    <li>Make the script executable: <code>chmod +x your_script.sh</code></li>
+                    <li>Run the script: <code>./your_script.sh video1.mp4 video2.mkv</code></li>
+                    <li><strong>Install FFMPEG:</strong> Use Homebrew: <code>brew install ffmpeg</code>
+                        <br>Don't have Homebrew? Install it from <a href="https://brew.sh/" target="_blank">brew.sh</a></li>
+                </ol>
             </div>
+        </details>
+    </div>
 
-            <div class="script-output-area" id="linux-script-area_"> <!-- id was linux-script-area -->
-                <h3>Linux/macOS Shell Script (.sh)</h3>
-                <p>Copy the text below and save it as a `.sh` file (e.g., `convert_video.sh`). Make it executable with `chmod +x convert_video.sh`. Remember to replace placeholder file names.</p>
-                <textarea id="linuxScript" readonly rows="10" placeholder="Linux shell script will appear here..."></textarea>
-                <button type="button" id="copyLinuxBtn" class="copy-btn">📄 Copy Linux Script</button>
-            </div>
-        </div>
-    </section>
-
-    <details class="mac-instructions">
-        <summary>ℹ️ Instructions for macOS Users</summary>
-        <div>
-            <h4>Using the Shell Script on macOS</h4>
-            <p>The Linux Shell Script (.sh file) generated above is also suitable for macOS users. Here’s how to use it:</p>
-            <ol>
-                <li>Open <strong>Terminal</strong>. You can find it in <code>/Applications/Utilities/</code> or search for it using Spotlight (Cmd + Space).</li>
-                <li>Navigate to the directory where you saved your <code>.sh</code> script file using the <code>cd</code> command (e.g., <code>cd ~/Downloads</code>).</li>
-                <li>Make the script executable by typing <code>chmod +x YOUR_SCRIPT_NAME.sh</code> (replace <code>YOUR_SCRIPT_NAME.sh</code> with the actual name of your file) and pressing Enter.</li>
-                <li>Run the script by typing <code>./YOUR_SCRIPT_NAME.sh</code> and pressing Enter.</li>
-                <li><strong>FFMPEG Installation (if needed):</strong> If you don't have FFMPEG installed, a common way to install it on macOS is using Homebrew. First, install Homebrew from <a href="https://brew.sh/" target="_blank" rel="noopener noreferrer">brew.sh</a> (if you don't have it), then run: <code>brew install ffmpeg</code> in Terminal.</li>
-            </ol>
-        </div>
-    </details>
-
-</div> <!-- End of .container -->
     <script>
-'use strict';
+        'use strict';
 
-document.addEventListener('DOMContentLoaded', () => {
-    // DOM Element Selection
-    // const inputFileEl = document.getElementById('inputFilePlaceholder'); // Removed
-    // const outputFileEl = document.getElementById('outputFilePlaceholder'); // Removed
-    const resolutionEl = document.getElementById('resolution');
-    const videoCodecEl = document.getElementById('videoCodec');
-    const audioCodecEl = document.getElementById('audioCodec');
-    const videoBitrateEl = document.getElementById('videoBitrate'); 
-    const generateBtn = document.getElementById('generateBtn');
-    const windowsScriptArea = document.getElementById('windowsScript'); 
-    const linuxScriptArea = document.getElementById('linuxScript');   
-    const copyWindowsBtn = document.getElementById('copyWindowsBtn');
-    const copyLinuxBtn = document.getElementById('copyLinuxBtn');
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const resolutionEl = document.getElementById('resolution');
+            const videoCodecEl = document.getElementById('videoCodec');
+            const audioCodecEl = document.getElementById('audioCodec');
+            const videoBitrateEl = document.getElementById('videoBitrate');
+            const generateBtn = document.getElementById('generateBtn');
+            const btnText = document.getElementById('btnText');
+            const windowsScriptArea = document.getElementById('windowsScript');
+            const linuxScriptArea = document.getElementById('linuxScript');
+            const copyWindowsBtn = document.getElementById('copyWindowsBtn');
+            const copyLinuxBtn = document.getElementById('copyLinuxBtn');
+            const scriptsSection = document.getElementById('scriptsSection');
 
-    // quoteFilename function is removed as placeholders are fixed strings.
-    
-    // generateFfmpegCommand Function
-    function generateFfmpegCommand(params) {
-        const commandParts = ['ffmpeg', '-y']; // Start with ffmpeg and -y for overwrite
+            // Generate FFMPEG Command
+            function generateFfmpegCommand(params) {
+                const commandParts = ['ffmpeg', '-y'];
+                commandParts.push('-i', '"$INPUT_FILE"');
 
-        // Use fixed placeholders for input and output files
-        commandParts.push('-i', '"$INPUT_FILE"');
+                if (params.resolution) {
+                    commandParts.push('-s', params.resolution);
+                }
+                
+                commandParts.push('-c:v', params.videoCodec || 'libx264');
+                commandParts.push('-c:a', params.audioCodec || 'aac');
 
-        if (params.resolution) {
-            commandParts.push('-s', params.resolution);
-        }
-        if (params.videoCodec) {
-            commandParts.push('-c:v', params.videoCodec);
-        }
-        // Provide default video codec if none is specified
-        else {
-            commandParts.push('-c:v', 'libx264'); 
-        }
+                if (params.bitrate) {
+                    commandParts.push('-b:v', params.bitrate);
+                }
 
-        if (params.audioCodec) {
-            commandParts.push('-c:a', params.audioCodec);
-        }
-        // Provide default audio codec if none is specified
-        else {
-            commandParts.push('-c:a', 'aac');
-        }
+                commandParts.push('"$OUTPUT_FILE_REENCODED"');
+                return commandParts.join(' ');
+            }
 
-        if (params.bitrate) {
-            commandParts.push('-b:v', params.bitrate);
-        }
-
-        // Output file - use fixed placeholder
-        commandParts.push('"$OUTPUT_FILE_REENCODED"');
-
-        return commandParts.join(' ');
-    }
-
-    // generateWindowsScript Function
-    function generateWindowsScript(ffmpegCommandWithPlaceholders, params) {
-        // Using template literals for multi-line string.
-        // Note: The batch script uses !VAR! for delayed expansion, and %%A for loop variables.
-        // The placeholders "$INPUT_FILE$" and "$OUTPUT_FILE_REENCODED$" (with quotes) are literal strings
-        // that will be present in ffmpegCommandWithPlaceholders and then replaced inside the batch script.
-        const script = `@echo off
-REM This script processes files dragged onto it.
-REM It re-encodes them using FFMPEG with the specified parameters,
-REM adding "_reencoded" to the original filename.
+            // Generate Windows Script
+            function generateWindowsScript(ffmpegCommand) {
+                return `@echo off
+REM FFMPEG Video Conversion Script for Windows
+REM Drag and drop video files onto this script to convert them
+REM Generated by FFMPEG Script Generator
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-REM Loop through all files dragged onto the script
-FOR %%A IN (%*) DO (
-    echo Processing file: "%%~A"
+echo.
+echo ========================================
+echo    FFMPEG Video Conversion Tool
+echo ========================================
+echo.
 
-    REM Get filename components
+if "%~1"=="" (
+    echo No files provided. Please drag and drop video files onto this script.
+    echo.
+    pause
+    exit /b 1
+)
+
+REM Loop through all dragged files
+FOR %%A IN (%*) DO (
+    echo Processing: "%%~nxA"
+    echo.
+
+    REM Get file components
     SET "INPUT_FILE_PATH=%%~A"
     SET "BASENAME=%%~nA"
     SET "EXTENSION=%%~xA"
 
-    REM Construct output filename
+    REM Create output filename
     SET "OUTPUT_FILENAME=!BASENAME!_reencoded!EXTENSION!"
 
-    echo Output will be: "!OUTPUT_FILENAME!"
+    echo Input:  "%%~nxA"
+    echo Output: "!OUTPUT_FILENAME!"
+    echo.
 
-    REM Prepare the FFMPEG command for the current file
-    SET "ACTUAL_FFMPEG_COMMAND=${ffmpegCommandWithPlaceholders}"
-    
-    REM Replace the "$INPUT_FILE" placeholder.
-    SET "CMD_TEMP=!ACTUAL_FFMPEG_COMMAND:"$INPUT_FILE"="%%~A"!"
-    REM Replace the "$OUTPUT_FILE_REENCODED" placeholder.
+    REM Prepare FFMPEG command
+    SET "FFMPEG_CMD=${ffmpegCommand}"
+    SET "CMD_TEMP=!FFMPEG_CMD:"$INPUT_FILE"="%%~A"!"
     SET "FINAL_CMD=!CMD_TEMP:"$OUTPUT_FILE_REENCODED"="!OUTPUT_FILENAME!"!"
     
-    REM Execute FFMPEG
-    echo Running: !FINAL_CMD!
+    REM Execute conversion
+    echo Executing: !FINAL_CMD!
+    echo.
     !FINAL_CMD!
 
+    if !ERRORLEVEL! EQU 0 (
+        echo ✓ Successfully converted: "%%~nxA"
+    ) else (
+        echo ✗ Error converting: "%%~nxA"
+    )
+    echo.
+    echo ----------------------------------------
     echo.
 )
 
 echo All files processed.
-pause
-`;
-        return script;
-    }
+echo.
+pause`;
+            }
 
-    // generateLinuxScript Function
-    function generateLinuxScript(ffmpegCommandWithPlaceholders, params) {
-        // Escape backticks and other special characters for JavaScript template literal
-        const escapedFfmpegCommand = ffmpegCommandWithPlaceholders.replace(/`/g, '\\`');
+            // Generate Linux Script
+            function generateLinuxScript(ffmpegCommand) {
+                const escapedCommand = ffmpegCommand.replace(/`/g, '\\`');
+                
+                return `#!/bin/bash
+# FFMPEG Video Conversion Script for Linux/macOS
+# Usage: ./script.sh file1.mp4 file2.mkv ...
+# Generated by FFMPEG Script Generator
 
-        const script = `#!/bin/bash
-# This script processes files provided as arguments.
-# It re-encodes them using FFMPEG with the specified parameters,
-# adding "_reencoded" to the original filename.
+set -euo pipefail
+
+echo
+echo "========================================"
+echo "    FFMPEG Video Conversion Tool"
+echo "========================================"
+echo
 
 if [ "$#" -eq 0 ]; then
-    echo "No files provided. Please drag and drop files onto the script (if your environment supports it for .sh files) or provide them as arguments in the terminal."
-    echo "Usage: ./your_script_name.sh file1.mp4 file2.mkv ..."
+    echo "No files provided."
+    echo "Usage: $0 file1.mp4 file2.mkv ..."
+    echo
+    exit 1
+fi
+
+# Check if ffmpeg is installed
+if ! command -v ffmpeg &> /dev/null; then
+    echo "Error: FFMPEG is not installed or not in PATH."
+    echo "Please install FFMPEG first:"
+    echo "  macOS: brew install ffmpeg"
+    echo "  Ubuntu/Debian: sudo apt install ffmpeg"
+    echo
     exit 1
 fi
 
 for file in "$@"; do
-    echo "Processing file: \\"$file\\"" # Escaped quotes for JS
+    echo "Processing: \\"$(basename "$file")\\""
+    echo
 
-    # Get filename components
-    FILENAME_WITH_EXT="\${file##*/}"                      # Get filename with extension (e.g., video.mp4)
-    EXTENSION_PART="\${FILENAME_WITH_EXT##*.}"             # Get extension part (e.g., mp4)
-    FILENAME_NO_EXT="\${FILENAME_WITH_EXT%.*}"            # Get filename without extension part (e.g., video)
-
-    # Determine actual base name and extension for output construction
-    OUTPUT_BASENAME=""
-    OUTPUT_EXTENSION_WITH_DOT="" # Will include the dot if there's an extension
-
-    if [[ "$FILENAME_WITH_EXT" == "$EXTENSION_PART" ]]; then # Filename has no dot (no extension) or is a dotfile like .config
-        if [[ "$FILENAME_WITH_EXT" == .* ]]; then # It's a dotfile like .config (FILENAME_NO_EXT would be empty)
-            OUTPUT_BASENAME="$FILENAME_WITH_EXT" # e.g. .config
-        else # No extension like 'myfile'
-            OUTPUT_BASENAME="$FILENAME_WITH_EXT" # e.g. myfile
-        fi
-    elif [[ "$FILENAME_NO_EXT" == "" ]]; then # Filename starts with a dot and has an extension (e.g., .config.old -> EXTENSION_PART=old, FILENAME_NO_EXT=.config)
-         OUTPUT_BASENAME="$FILENAME_WITH_EXT" # Treat as if no extension for suffixing, e.g. .config.old_reencoded
-    else # Common case: filename.extension
-        OUTPUT_BASENAME="$FILENAME_NO_EXT"
-        OUTPUT_EXTENSION_WITH_DOT=".$EXTENSION_PART"
-    fi
-    
-    # Construct output filename
-    OUTPUT_FILENAME="\${OUTPUT_BASENAME}_reencoded\${OUTPUT_EXTENSION_WITH_DOT}"
-    
-    # If input and output names are identical (e.g. processing a "_reencoded" file by mistake), skip or warn.
-    if [[ "$file" == "$OUTPUT_FILENAME" ]]; then
-        echo "Skipping file because input and output names would be identical: $file"
+    # Check if file exists
+    if [ ! -f "$file" ]; then
+        echo "Warning: File not found: \\"$file\\""
+        echo "Skipping..."
+        echo
         continue
     fi
 
-    echo "Output will be: \\"$OUTPUT_FILENAME\\"" # Escaped quotes for JS
+    # Get filename components
+    FILENAME_WITH_EXT="$(basename "$file")"
+    FILENAME_NO_EXT="\${FILENAME_WITH_EXT%.*}"
+    EXTENSION="\${FILENAME_WITH_EXT##*.}"
 
-    # Prepare the FFMPEG command for the current file.
-    # The placeholders in ffmpegCommandWithPlaceholders are "$INPUT_FILE" and "$OUTPUT_FILE_REENCODED" (literally)
+    # Handle files without extensions
+    if [ "$FILENAME_WITH_EXT" = "$EXTENSION" ]; then
+        OUTPUT_FILENAME="\${FILENAME_WITH_EXT}_reencoded"
+    else
+        OUTPUT_FILENAME="\${FILENAME_NO_EXT}_reencoded.\${EXTENSION}"
+    fi
+
+    echo "Input:  \\"$FILENAME_WITH_EXT\\""
+    echo "Output: \\"$OUTPUT_FILENAME\\""
+    echo
+
+    # Skip if output file already exists
+    if [ -f "$OUTPUT_FILENAME" ]; then
+        echo "Warning: Output file already exists: \\"$OUTPUT_FILENAME\\""
+        echo "Skipping to avoid overwrite..."
+        echo
+        continue
+    fi
+
+    # Prepare FFMPEG command
+    FFMPEG_COMMAND_TEMPLATE="${escapedCommand}"
     
-    # Safely prepare variables for sed replacement.
-    # This handles spaces, newlines, and sed special characters in filenames.
-    INPUT_FILE_SAFE_FOR_SED=$(printf '%s\\n' "$file" | sed 's:[\\/&]:\\\\&:g;$!s/$/\\\\n/') 
-    INPUT_FILE_SAFE_FOR_SED="\${INPUT_FILE_SAFE_FOR_SED//$'\\n'/\\n}" 
-    OUTPUT_FILENAME_SAFE_FOR_SED=$(printf '%s\\n' "$OUTPUT_FILENAME" | sed 's:[\\/&]:\\\\&:g;$!s/$/\\\\n/')
-    OUTPUT_FILENAME_SAFE_FOR_SED="\${OUTPUT_FILENAME_SAFE_FOR_SED//$'\\n'/\\n}"
+    # Replace placeholders safely
+    CURRENT_FFMPEG_COMMAND="\${FFCURRENT_FFMPEG_COMMAND="\${FFMPEG_COMMAND_TEMPLATE//\\"\\$INPUT_FILE\\"/\\"$file\\"}"
+   CURRENT_FFMPEG_COMMAND="\${CURRENT_FFMPEG_COMMAND//\\"\\$OUTPUT_FILE_REENCODED\\"/\\"$OUTPUT_FILENAME\\"}"
 
-    # The command template itself might contain characters that sed interprets.
-    # However, we are replacing fixed placeholder strings, so we only need to escape the placeholders for sed.
-    FFMPEG_COMMAND_TEMPLATE="${escapedFfmpegCommand}"
+   echo "Executing: $CURRENT_FFMPEG_COMMAND"
+   echo
 
-    # Define placeholders as they appear in FFMPEG_COMMAND_TEMPLATE
-    # These are literal strings "$INPUT_FILE" and "$OUTPUT_FILE_REENCODED"
-    # We need to escape them for the sed 'find' pattern.
-    # \$ for shell, then \\\$ for sed to see literal $
-    # Quotes need to be matched: \\" for shell, then \\\\\\" for sed to see literal "
-    PLACEHOLDER_IN_SED_FIND="\\\"\\\\\\$INPUT_FILE\\\\\\\""
-    PLACEHOLDER_OUT_SED_FIND="\\\"\\\\\\$OUTPUT_FILE_REENCODED\\\\\\\""
-    
-    # Substitute placeholders with the prepared safe filenames
-    # Using % as delimiter for sed to avoid issues if filenames contain /
-    CURRENT_FFMPEG_COMMAND=$(echo "$FFMPEG_COMMAND_TEMPLATE" | sed "s%${PLACEHOLDER_IN_SED_FIND}%\\"$INPUT_FILE_SAFE_FOR_SED\\"%g" | sed "s%${PLACEHOLDER_OUT_SED_FIND}%\\"$OUTPUT_FILENAME_SAFE_FOR_SED\\"%g")
-
-    echo "Running: $CURRENT_FFMPEG_COMMAND"
-    eval "$CURRENT_FFMPEG_COMMAND" # Using eval to correctly process quotes and expansions
-
-    echo ""
+   # Execute conversion
+   if eval "$CURRENT_FFMPEG_COMMAND"; then
+       echo "✓ Successfully converted: \\"$FILENAME_WITH_EXT\\""
+   else
+       echo "✗ Error converting: \\"$FILENAME_WITH_EXT\\""
+   fi
+   
+   echo
+   echo "----------------------------------------"
+   echo
 done
 
 echo "All files processed."
-`;
-        return script;
-    }
+echo`;
+           }
 
-    function copyToClipboard(textareaId, buttonId) {
-        const textarea = document.getElementById(textareaId);
-        const button = document.getElementById(buttonId);
-        const icon = '📄'; // Using page icon for copy
+           // Copy to Clipboard Function
+           async function copyToClipboard(text, button, originalText) {
+               try {
+                   if (navigator.clipboard) {
+                       await navigator.clipboard.writeText(text);
+                       button.innerHTML = '<span class="success">✓ Copied!</span>';
+                       button.disabled = true;
+                       
+                       setTimeout(() => {
+                           button.innerHTML = originalText;
+                           button.disabled = false;
+                       }, 2000);
+                   } else {
+                       // Fallback for older browsers
+                       const textArea = document.createElement('textarea');
+                       textArea.value = text;
+                       textArea.style.position = 'fixed';
+                       textArea.style.opacity = '0';
+                       document.body.appendChild(textArea);
+                       textArea.select();
+                       document.execCommand('copy');
+                       document.body.removeChild(textArea);
+                       
+                       button.innerHTML = '<span class="success">✓ Copied!</span>';
+                       setTimeout(() => {
+                           button.innerHTML = originalText;
+                       }, 2000);
+                   }
+               } catch (err) {
+                   console.error('Failed to copy:', err);
+                   button.innerHTML = '✗ Copy Failed';
+                   setTimeout(() => {
+                       button.innerHTML = originalText;
+                   }, 2000);
+               }
+           }
 
-        // Determine original button text based on ID (could also store original text in a data attribute)
-        let originalButtonText = "";
-        if (buttonId === 'copyWindowsBtn') {
-            originalButtonText = `${icon} Copy Windows Script`;
-        } else if (buttonId === 'copyLinuxBtn') {
-            originalButtonText = `${icon} Copy Linux Script`;
-        }
+           // Show Loading Animation
+           function showLoading() {
+               btnText.innerHTML = `
+                   <span class="loading">
+                       <span>Generating</span>
+                       <span class="loading-dots">
+                           <span class="loading-dot"></span>
+                           <span class="loading-dot"></span>
+                           <span class="loading-dot"></span>
+                       </span>
+                   </span>
+               `;
+               generateBtn.disabled = true;
+           }
 
+           // Hide Loading Animation
+           function hideLoading() {
+               btnText.innerHTML = '⚙️ Generate Scripts';
+               generateBtn.disabled = false;
+           }
 
-        if (!textarea || !button) {
-            console.error("Error: Textarea or button not found for copy operation.", textareaId, buttonId);
-            alert('Error setting up copy functionality.');
-            return;
-        }
+           // Show Scripts Section with Animation
+           function showScriptsSection() {
+               scriptsSection.style.display = 'block';
+               setTimeout(() => {
+                   scriptsSection.scrollIntoView({ 
+                       behavior: 'smooth', 
+                       block: 'start' 
+                   });
+               }, 100);
+           }
 
-        if (!navigator.clipboard) {
-            alert('Clipboard API not available in your browser. Please copy manually.');
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                button.textContent = `${icon} Selected! (manual copy)`;
-            } catch (e) {
-                button.textContent = `${icon} Error selecting!`;
-            }
-            setTimeout(() => {
-                button.textContent = originalButtonText;
-            }, 3000);
-            return;
-        }
+           // Handle Generate Scripts
+           function handleGenerateScripts() {
+               showLoading();
+               
+               // Simulate processing delay for better UX
+               setTimeout(() => {
+                   const params = {
+                       resolution: resolutionEl.value.trim(),
+                       videoCodec: videoCodecEl.value.trim(),
+                       audioCodec: audioCodecEl.value.trim(),
+                       bitrate: videoBitrateEl.value.trim()
+                   };
 
-        navigator.clipboard.writeText(textarea.value)
-            .then(() => {
-                button.textContent = `${icon} Copied!`;
-                button.disabled = true;
-                setTimeout(() => {
-                    button.textContent = originalButtonText;
-                    button.disabled = false;
-                }, 2000); 
-            })
-            .catch(err => {
-                console.error('Failed to copy text: ', err);
-                alert('Failed to copy text. See console for details. Please copy manually.');
-                textarea.select();
-                try {
-                    document.execCommand('copy');
-                    button.textContent = `${icon} Selected! (manual copy)`;
-                } catch (e) {
-                    button.textContent = `${icon} Error selecting!`;
-                }
-                setTimeout(() => {
-                    button.textContent = originalButtonText;
-                }, 3000);
-            });
-    }
+                   console.log('Parameters:', params);
 
+                   // Generate FFMPEG command
+                   const ffmpegCommand = generateFfmpegCommand(params);
+                   console.log('FFMPEG Command:', ffmpegCommand);
 
-    // Event Listener for "Generate Scripts" Button
-    if (generateBtn) {
-        generateBtn.addEventListener('click', handleGenerateScripts);
-    } else {
-        console.error("Error: Generate button not found. Check generateBtn ID.");
-    }
+                   // Generate scripts
+                   const windowsScript = generateWindowsScript(ffmpegCommand);
+                   const linuxScript = generateLinuxScript(ffmpegCommand);
 
-    // Event Listeners for Copy Buttons
-    if (copyWindowsBtn) {
-        copyWindowsBtn.addEventListener('click', () => copyToClipboard('windowsScript', 'copyWindowsBtn'));
-    } else {
-        console.error("Error: Copy Windows button not found. Check copyWindowsBtn ID.");
-    }
+                   // Update textareas
+                   windowsScriptArea.value = windowsScript;
+                   linuxScriptArea.value = linuxScript;
 
-    if (copyLinuxBtn) {
-        copyLinuxBtn.addEventListener('click', () => copyToClipboard('linuxScript', 'copyLinuxBtn'));
-    } else {
-        console.error("Error: Copy Linux button not found. Check copyLinuxBtn ID.");
-    }
+                   hideLoading();
+                   showScriptsSection();
+               }, 800); // Small delay for better perceived performance
+           }
 
-    // handleGenerateScripts Function
-    function handleGenerateScripts() {
-        // Retrieve values from input fields
-        // const inputFileVal = inputFileEl.value.trim(); // Removed
-        // const outputFileVal = outputFileEl.value.trim(); // Removed
-        const resolutionVal = resolutionEl.value.trim();
-        const videoCodecVal = videoCodecEl.value.trim();
-        const audioCodecVal = audioCodecEl.value.trim();
-        const bitrateVal = videoBitrateEl.value.trim();
+           // Event Listeners
+           if (generateBtn) {
+               generateBtn.addEventListener('click', handleGenerateScripts);
+           }
 
-        // Basic Validation - Removed for inputFileVal and outputFileVal
+           if (copyWindowsBtn) {
+               copyWindowsBtn.addEventListener('click', () => {
+                   copyToClipboard(
+                       windowsScriptArea.value, 
+                       copyWindowsBtn, 
+                       '📄 Copy Windows Script'
+                   );
+               });
+           }
 
-        // Store gathered values in an object
-        const params = {
-            // inputFile: inputFileVal, // Removed
-            // outputFile: outputFileVal, // Removed
-            resolution: resolutionVal,
-            videoCodec: videoCodecVal, // This could be empty if user clears it
-            audioCodec: audioCodecVal, // This could be empty if user clears it
-            bitrate: bitrateVal
-        };
+           if (copyLinuxBtn) {
+               copyLinuxBtn.addEventListener('click', () => {
+                   copyToClipboard(
+                       linuxScriptArea.value, 
+                       copyLinuxBtn, 
+                       '📄 Copy Linux Script'
+                   );
+               });
+           }
 
-        // Log collected parameters
-        console.log("Collected Parameters:", params);
+           // Allow Enter key to generate scripts
+           document.addEventListener('keydown', (e) => {
+               if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                   e.preventDefault();
+                   handleGenerateScripts();
+               }
+           });
 
-        // Generate FFMPEG command
-        const ffmpegCommand = generateFfmpegCommand(params);
-        console.log("Generated FFMPEG Command:", ffmpegCommand);
+           // Add subtle parallax effect to hero section
+           window.addEventListener('scroll', () => {
+               const scrolled = window.pageYOffset;
+               const hero = document.querySelector('.hero');
+               if (hero) {
+                   hero.style.transform = `translateY(${scrolled * 0.1}px)`;
+               }
+           });
 
-        // Generate Windows Batch Script
-        const windowsBatchScript = generateWindowsScript(ffmpegCommand, params);
-        
-        // Generate Linux Shell Script
-        const linuxShellScript = generateLinuxScript(ffmpegCommand, params);
+           // Form validation and real-time feedback
+           const inputs = [resolutionEl, videoCodecEl, audioCodecEl, videoBitrateEl];
+           inputs.forEach(input => {
+               if (input) {
+                   input.addEventListener('input', (e) => {
+                       const value = e.target.value.trim();
+                       const label = e.target.previousElementSibling;
+                       
+                       if (value) {
+                           label.style.color = 'var(--apple-blue)';
+                       } else {
+                           label.style.color = 'var(--apple-black)';
+                       }
+                   });
+               }
+           });
 
-        // Update textareas
-        if (windowsScriptArea && linuxScriptArea) {
-            windowsScriptArea.value = windowsBatchScript;
-            linuxScriptArea.value = linuxShellScript;
-        } else {
-            console.error("Error: Script output textareas not found. Check element IDs.");
-        }
-    }
-});
-    </script>
+           console.log('FFMPEG Script Generator initialized successfully!');
+       });
+   </script>
 </body>
 </html>
