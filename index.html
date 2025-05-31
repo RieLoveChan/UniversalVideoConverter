@@ -199,12 +199,6 @@
         <!-- Save and Load buttons -->
         <button id="save-config">Save Configuration</button>
         <button id="load-config">Load Configuration</button>
-
-        <!-- Instructions -->
-        <div class="instructions">
-            <h3>Mac Instructions:</h3>
-            <p>To run the batch script on Mac, open Terminal, navigate to the script's folder, and use <code>sh script_name.sh</code> to execute it.</p>
-        </div>
     </div>
 
     <script>
@@ -276,7 +270,10 @@ for %%F in (*.*) do (
             `.trim();
         };
 
-        [document.getElementById('suffix'), document.getElementById('crf'), document.getElementById('pix_fmt'), document.getElementById('hwaccel'), document.getElementById('filter_complex')].forEach(input => {
+        [document.getElementById('suffix'), document.getElementById('crf'), document.getElementById('pix_fmt'), document.getElementById('hwaccel'), document.getElementById('filter_complex'),
+         document.getElementById('vcodec'), document.getElementById('vb'), document.getElementById('framerate'), document.getElementById('vf'), document.getElementById('aspect'), 
+         document.getElementById('preset'), document.getElementById('profile'), document.getElementById('level'), document.getElementById('acodec'), document.getElementById('ab'), 
+         document.getElementById('ar'), document.getElementById('ac'), document.getElementById('vol'), document.getElementById('af')].forEach(input => {
             input.addEventListener('input', updateScript);
         });
     </script>
