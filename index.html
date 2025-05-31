@@ -845,7 +845,455 @@ body {
     </div>
 
     <script>
-        <!-- JavaScript execution disabled for testing -->
+        'use strict';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const resolutionEl = document.getElementById('resolution');
+            const videoCodecEl = document.getElementById('videoCodec');
+            const videoCodecSelectEl = document.getElementById('videoCodecSelect');
+            const audioCodecEl = document.getElementById('audioCodec');
+            const audioCodecSelectEl = document.getElementById('audioCodecSelect');
+            const audioBitrateOptionEl = document.getElementById('audioBitrateOption');
+            const crfValueEl = document.getElementById('crfValue');
+            const presetOptionEl = document.getElementById('presetOption');
+            const pixelFormatOptionEl = document.getElementById('pixelFormatOption');
+            const videoProfileOptionEl = document.getElementById('videoProfileOption');
+            const levelOptionEl = document.getElementById('levelOption');
+            const bfOptionEl = document.getElementById('bfOption');
+            const gopSizeOptionEl = document.getElementById('gopSizeOption');
+            const movflagsOptionEl = document.getElementById('movflagsOption');
+
+            const generateBtn = document.getElementById('generateBtn');
+            const btnText = document.getElementById('btnText');
+            const windowsScriptArea = document.getElementById('windowsScript');
+            const linuxScriptArea = document.getElementById('linuxScript');
+            const copyWindowsBtn = document.getElementById('copyWindowsBtn');
+            const copyLinuxBtn = document.getElementById('copyLinuxBtn');
+            const scriptsSection = document.getElementById('scriptsSection');
+
+            // Helper function to handle quick select for codecs
+            function setupCodecQuickSelect(textInputEl, selectInputEl) {
+                if (selectInputEl) {
+                    selectInputEl.addEventListener('change', function() {
+                        const selectedValue = this.value;
+                        if (selectedValue) {
+                            textInputEl.value = selectedValue;
+                            textInputEl.focus();
+                            textInputEl.dispatchEvent(new Event('input', { bubbles: true }));
+                            this.value = ''; // Reset select
+                        }
+                    });
+                }
+            }
+
+            // setupCodecQuickSelect(videoCodecEl, videoCodecSelectEl); // Call for videoCodecSelectEl remains commented
+            setupCodecQuickSelect(audioCodecEl, audioCodecSelectEl); // Call for audioCodecSelectEl remains active
+
+            // Generate FFMPEG Command
+            function generateFfmpegCommand(params) {
+                const commandParts = ['ffmpeg', '-y'];
+                commandParts.push('-i', '"$INPUT_FILE"');
+
+                if (params.resolution) {
+                    commandParts.push('-s', params.resolution);
+                }
+
+                // Video Codec specific handling
+                const isVideoCopy = params.videoCodec.toLowerCase() === 'copy';
+
+                commandParts.push('-c:v', params.videoCodec || 'libx264');
+
+                if (!isVideoCopy) { // Parameters below are ignored if video is copied
+                    if (params.crf && !params.videoCodec.includes('nvenc') && !params.videoCodec.includes('videotoolbox')) { // CRF for software encoders
+                        commandParts.push('-crf', params.crf);
+                    }
+                    if (params.preset) {
+                        commandParts.push('-preset', params.preset);
+                    }
+                    if (params.pixelFormat) {
+                        commandParts.push('-pix_fmt', params.pixelFormat);
+                    }
+                    if (params.videoProfile) {
+                        commandParts.push('-profile:v', params.videoProfile);
+                    }
+                    if (params.level) {
+                        commandParts.push('-level:v', params.level); // -level:v is more specific
+                    }
+                    if (params.bf) {
+                        commandParts.push('-bf', params.bf);
+                    }
+                    if (params.gopSize) {
+                        commandParts.push('-g', params.gopSize);
+                    }
+                }
+
+                // Audio Codec specific handling
+                const isAudioCopy = params.audioCodec.toLowerCase() === 'copy';
+                commandParts.push('-c:a', params.audioCodec || 'aac');
+
+                if (!isAudioCopy && params.audioBitrate) { // Audio bitrate ignored if audio is copied
+                    commandParts.push('-b:a', params.audioBitrate);
+                }
+
+                if (params.movflags) {
+                    commandParts.push('-movflags', params.movflags);
+                }
+
+                commandParts.push('"$OUTPUT_FILE_REENCODED"');
+                return commandParts.join(' ');
+            }
+
+            // Generate Windows Script (remains largely the same)
+            function generateWindowsScript(ffmpegCommand) {
+                return `@echo off
+REM FFMPEG Video Conversion Script for Windows
+REM Drag and drop video files onto this script to convert them
+REM Generated by FFMPEG Script Generator
+
+SETLOCAL ENABLEDELAYEDEXPANSION
+
+echo.
+echo ========================================
+echo    FFMPEG Video Conversion Tool
+echo ========================================
+echo.
+
+if "%~1"=="" (
+    echo No files provided. Please drag and drop video files onto this script.
+    echo.
+    pause
+    exit /b 1
+)
+
+REM Loop through all dragged files
+FOR %%A IN (%*) DO (
+    echo Processing: "%%~nxA"
+    echo.
+
+    REM Get file components
+    SET "INPUT_FILE_PATH=%%~A"
+    SET "BASENAME=%%~nA"
+    SET "EXTENSION=%%~xA"
+
+    REM Create output filename
+    SET "OUTPUT_FILENAME=!BASENAME!_reencoded!EXTENSION!"
+
+    echo Input:  "%%~nxA"
+    echo Output: "!OUTPUT_FILENAME!"
+    echo.
+
+    REM Prepare FFMPEG command
+    SET "FFMPEG_CMD=${ffmpegCommand}"
+    SET "CMD_TEMP=!FFMPEG_CMD:"$INPUT_FILE"="%%~A"!"
+    SET "FINAL_CMD=!CMD_TEMP:"$OUTPUT_FILE_REENCODED"="!OUTPUT_FILENAME!"!"
+
+    REM Execute conversion
+    echo Executing: !FINAL_CMD!
+    echo.
+    !FINAL_CMD!
+
+    if !ERRORLEVEL! EQU 0 (
+        echo ✓ Successfully converted: "%%~nxA"
+    ) else (
+        echo ✗ Error converting: "%%~nxA"
+    )
+    echo.
+    echo ----------------------------------------
+    echo.
+)
+
+echo All files processed.
+echo.
+pause`;
+            }
+
+            // Generate Linux Script (remains largely the same)
+            function generateLinuxScript(ffmpegCommand) {
+                const escapedCommand = ffmpegCommand.replace(/`/g, '\\`');
+
+                return `#!/bin/bash
+# FFMPEG Video Conversion Script for Linux/macOS
+# Usage: ./script.sh file1.mp4 file2.mkv ...
+# Generated by FFMPEG Script Generator
+
+set -euo pipefail
+
+echo
+echo "========================================"
+echo "    FFMPEG Video Conversion Tool"
+echo "========================================"
+echo
+
+if [ "$#" -eq 0 ]; then
+    echo "No files provided."
+    echo
+    echo "Usage: $0 file1.mp4 file2.mkv ..."
+   echo
+   exit 1
+fi
+
+# Check if ffmpeg is installed
+if ! command -v ffmpeg &> /dev/null; then
+   echo "Error: FFMPEG is not installed or not in PATH."
+   echo "Please install FFMPEG first:"
+   echo "  macOS: brew install ffmpeg"
+   echo "  Ubuntu/Debian: sudo apt install ffmpeg"
+   echo
+   exit 1
+fi
+
+for file in "$@"; do
+   echo "Processing: \\"$(basename "$file")\\""
+   echo
+
+   # Check if file exists
+   if [ ! -f "$file" ]; then
+       echo "Warning: File not found: \\"$file\\""
+       echo "Skipping..."
+       echo
+       continue
+   fi
+
+   # Get filename components
+   FILENAME_WITH_EXT="$(basename "$file")"
+   FILENAME_NO_EXT="\${FILENAME_WITH_EXT%.*}"
+   EXTENSION="\${FILENAME_WITH_EXT##*.}"
+
+   # Handle files without extensions
+   if [ "$FILENAME_WITH_EXT" = "$EXTENSION" ]; then
+       OUTPUT_FILENAME="\${FILENAME_WITH_EXT}_reencoded"
+   else
+       OUTPUT_FILENAME="\${FILENAME_NO_EXT}_reencoded.\${EXTENSION}"
+   fi
+
+   echo "Input:  \\"$FILENAME_WITH_EXT\\""
+   echo "Output: \\"$OUTPUT_FILENAME\\""
+   echo
+
+   # Skip if output file already exists
+   if [ -f "$OUTPUT_FILENAME" ]; then
+       echo "Warning: Output file already exists: \\"$OUTPUT_FILENAME\\""
+       echo "Skipping to avoid overwrite..."
+       echo
+       continue
+   fi
+
+   # Prepare FFMPEG command
+   FFMPEG_COMMAND_TEMPLATE="${escapedCommand}"
+
+   # Replace placeholders safely
+   CURRENT_FFMPEG_COMMAND="\${FFMPEG_COMMAND_TEMPLATE//\\"\\$INPUT_FILE\\"/\\"$file\\"}"
+   CURRENT_FFMPEG_COMMAND="\${CURRENT_FFMPEG_COMMAND//\\"\\$OUTPUT_FILE_REENCODED\\"/\\"$OUTPUT_FILENAME\\"}"
+
+   echo "Executing: $CURRENT_FFMPEG_COMMAND"
+   echo
+
+   # Execute conversion
+   if eval "$CURRENT_FFMPEG_COMMAND"; then
+       echo "✓ Successfully converted: \\"$FILENAME_WITH_EXT\\""
+   else
+       echo "✗ Error converting: \\"$FILENAME_WITH_EXT\\""
+   fi
+
+   echo
+   echo "----------------------------------------"
+   echo
+done
+
+echo "All files processed."
+echo`;
+           }
+
+           // Copy to Clipboard Function
+           async function copyToClipboard(text, button, originalText) {
+               try {
+                   if (navigator.clipboard) {
+                       await navigator.clipboard.writeText(text);
+                       button.innerHTML = '<span class="success">✓ Copied!</span>';
+                       button.disabled = true;
+
+                       setTimeout(() => {
+                           button.innerHTML = originalText;
+                           button.disabled = false;
+                       }, 2000);
+                   } else {
+                       // Fallback for older browsers
+                       const textArea = document.createElement('textarea');
+                       textArea.value = text;
+                       textArea.style.position = 'fixed';
+                       textArea.style.opacity = '0';
+                       document.body.appendChild(textArea);
+                       textArea.select();
+                       document.execCommand('copy');
+                       document.body.removeChild(textArea);
+
+                       button.innerHTML = '<span class="success">✓ Copied!</span>';
+                       setTimeout(() => {
+                           button.innerHTML = originalText;
+                       }, 2000);
+                   }
+               } catch (err) {
+                   console.error('Failed to copy:', err);
+                   button.innerHTML = '✗ Copy Failed';
+                   setTimeout(() => {
+                       button.innerHTML = originalText;
+                   }, 2000);
+               }
+           }
+
+           // Show Loading Animation
+           function showLoading() {
+               btnText.innerHTML = `
+                   <span class="loading">
+                       <span>Generating</span>
+                       <span class="loading-dots">
+                           <span class="loading-dot"></span>
+                           <span class="loading-dot"></span>
+                           <span class="loading-dot"></span>
+                       </span>
+                   </span>
+               `;
+               generateBtn.disabled = true;
+           }
+
+           // Hide Loading Animation
+           function hideLoading() {
+               btnText.innerHTML = '⚙️ Generate Scripts';
+               generateBtn.disabled = false;
+           }
+
+           // Show Scripts Section with Animation
+           function showScriptsSection() {
+               scriptsSection.style.display = 'block';
+               setTimeout(() => {
+                   scriptsSection.scrollIntoView({
+                       behavior: 'smooth',
+                       block: 'start'
+                   });
+               }, 100);
+           }
+
+           // Handle Generate Scripts
+           function handleGenerateScripts() {
+               showLoading();
+
+               setTimeout(() => {
+                   const params = {
+                       resolution: resolutionEl.value.trim(),
+                       videoCodec: videoCodecEl.value.trim() || 'libx264',
+                       audioCodec: audioCodecEl.value.trim() || 'aac',
+                       audioBitrate: audioBitrateOptionEl.value,
+                       crf: crfValueEl.value.trim(),
+                       preset: presetOptionEl.value,
+                       pixelFormat: pixelFormatOptionEl.value,
+                       videoProfile: videoProfileOptionEl.value,
+                       level: levelOptionEl.value,
+                       bf: bfOptionEl.value,
+                       gopSize: gopSizeOptionEl.value.trim(),
+                       movflags: movflagsOptionEl.value
+                   };
+
+                   // Validate CRF and GOP size (must be numbers if provided)
+                   if (params.crf && isNaN(parseFloat(params.crf))) {
+                       alert("CRF value must be a number.");
+                       hideLoading();
+                       return;
+                   }
+                   if (params.gopSize && (isNaN(parseInt(params.gopSize)) || parseInt(params.gopSize) <= 0)) {
+                       alert("GOP size must be a positive number.");
+                       hideLoading();
+                       return;
+                   }
+
+                   console.log('Parameters:', params);
+
+                   const ffmpegCommand = generateFfmpegCommand(params);
+                   console.log('FFMPEG Command:', ffmpegCommand);
+
+                   const windowsScript = generateWindowsScript(ffmpegCommand);
+                   const linuxScript = generateLinuxScript(ffmpegCommand);
+
+                   windowsScriptArea.value = windowsScript;
+                   linuxScriptArea.value = linuxScript;
+
+                   hideLoading();
+                   showScriptsSection();
+               }, 800);
+           }
+
+           // Event Listeners
+           /*
+           if (generateBtn) {
+               generateBtn.addEventListener('click', handleGenerateScripts);
+           }
+
+           if (copyWindowsBtn) {
+               copyWindowsBtn.addEventListener('click', () => {
+                   copyToClipboard(
+                       windowsScriptArea.value,
+                       copyWindowsBtn,
+                       '📄 Copy Windows Script'
+                   );
+               });
+           }
+
+           if (copyLinuxBtn) {
+               copyLinuxBtn.addEventListener('click', () => {
+                   copyToClipboard(
+                       linuxScriptArea.value,
+                       copyLinuxBtn,
+                       '📄 Copy Linux Script'
+                   );
+               });
+           }
+
+           document.addEventListener('keydown', (e) => {
+               if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                   e.preventDefault();
+                   handleGenerateScripts();
+               }
+           });
+
+           window.addEventListener('scroll', () => {
+               const scrolled = window.pageYOffset;
+               const hero = document.querySelector('.hero');
+               if (hero) {
+                   hero.style.transform = `translateY(${scrolled * 0.1}px)`;
+               }
+           });
+           */
+
+           const inputs = [
+               resolutionEl, videoCodecEl, audioCodecEl, crfValueEl, gopSizeOptionEl,
+               audioBitrateOptionEl, presetOptionEl, pixelFormatOptionEl,
+               videoProfileOptionEl, levelOptionEl, bfOptionEl, movflagsOptionEl
+           ];
+           /*
+           inputs.forEach(input => {
+               if (input) {
+                   const eventType = (input.tagName === 'SELECT' || input.type === 'number') ? 'change' : 'input';
+                   input.addEventListener(eventType, (e) => {
+                       const label = document.querySelector(`label[for="${e.target.id}"]`);
+                       if (label) {
+                           if (e.target.value.trim() && e.target.value.trim() !== '(auto)' && e.target.value.trim() !== '(none)') {
+                               label.style.color = 'var(--apple-blue)';
+                           } else {
+                               label.style.color = 'var(--apple-black)'; // Or your default label color
+                           }
+                       }
+                   });
+                   // Initial check in case of pre-filled values
+                   if (input.value.trim() && input.value.trim() !== '(auto)' && input.value.trim() !== '(none)') {
+                        const label = document.querySelector(`label[for="${input.id}"]`);
+                        if (label) label.style.color = 'var(--apple-blue)';
+                   }
+               }
+           });
+           */
+
+           console.log('FFMPEG Script Generator initialized successfully with all features!');
+       });
    </script>
 </body>
 </html>
