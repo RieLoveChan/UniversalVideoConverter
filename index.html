@@ -3,1297 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FFMPEG Batch/Shell Script Generator</title>
+    <title>FFMPEG Script Generator</title>
     <style>
-/* Apple-inspired Design System */
-:root {
-    --apple-black: #1d1d1f;
-    --apple-gray-1: #86868b;
-    --apple-gray-2: #515154;
-    --apple-gray-3: #424245;
-    --apple-gray-4: #2c2c2e;
-    --apple-gray-5: #1c1c1e;
-    --apple-gray-6: #f5f5f7;
-    --apple-white: #ffffff;
-    --apple-blue: #007aff;
-    --apple-blue-dark: #0056b3;
-    --apple-green: #30d158;
-    --apple-surface: rgba(255, 255, 255, 0.8);
-    --apple-surface-dark: rgba(28, 28, 30, 0.8);
-
-    /* Spacing system */
-    --spacing-xs: 8px;
-    --spacing-sm: 12px;
-    --spacing-md: 16px;
-    --spacing-lg: 24px;
-    --spacing-xl: 32px;
-    --spacing-2xl: 48px;
-    --spacing-3xl: 64px;
-
-    /* Border radius */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.12);
-}
-
-/* Global Reset & Base */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-    background: linear-gradient(135deg, var(--apple-gray-6) 0%, #ffffff 100%);
-    color: var(--apple-black);
-    line-height: 1.5;
-    font-size: 17px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-/* Container */
-.container {
-    max-width: 1020px;
-    margin: 0 auto;
-    padding: var(--spacing-lg);
-    position: relative;
-    z-index: 1;
-}
-
-/* Hero Section */
-.hero {
-    text-align: center;
-    padding: var(--spacing-3xl) 0;
-    margin-bottom: var(--spacing-2xl);
-    background: radial-gradient(circle at center, rgba(0, 122, 255, 0.03) 0%, transparent 70%);
-    border-radius: var(--radius-xl);
-    position: relative;
-    overflow: hidden;
-}
-
-.hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(134,134,139,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-    opacity: 0.3;
-    animation: gridMove 20s linear infinite;
-}
-
-@keyframes gridMove {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(-10px, -10px); }
-}
-
-.hero h1 {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 700;
-    letter-spacing: -0.04em;
-    color: var(--apple-black);
-    margin-bottom: var(--spacing-md);
-    position: relative;
-    z-index: 1;
-}
-
-.hero .subtitle {
-    font-size: 1.375rem;
-    font-weight: 400;
-    color: var(--apple-gray-1);
-    max-width: 600px;
-    margin: 0 auto var(--spacing-lg);
-    position: relative;
-    z-index: 1;
-}
-
-.hero .description {
-    font-size: 1.125rem;
-    color: var(--apple-gray-2);
-    max-width: 700px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-}
-
-.hero .ffmpeg-link {
-    color: var(--apple-blue);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.hero .ffmpeg-link:hover {
-    color: var(--apple-blue-dark);
-    text-decoration: underline;
-}
-
-/* Section Cards */
-.section-card {
-    background: var(--apple-surface);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: var(--radius-xl);
-    padding: var(--spacing-xl);
-    margin-bottom: var(--spacing-xl);
-    box-shadow: var(--shadow-lg);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.section-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
-}
-
-.section-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-xl);
-}
-
-.section-title {
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: var(--apple-black);
-    margin-bottom: var(--spacing-lg);
-    letter-spacing: -0.02em;
-}
-
-/* Form Styling */
-.form-group {
-    margin-bottom: var(--spacing-lg);
-    animation: fadeInUp 0.6s ease forwards;
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-.form-group:nth-child(1) { animation-delay: 0.1s; }
-.form-group:nth-child(2) { animation-delay: 0.2s; }
-.form-group:nth-child(3) { animation-delay: 0.3s; }
-.form-group:nth-child(4) { animation-delay: 0.4s; }
-.form-group:nth-child(5) { animation-delay: 0.5s; }
-.form-group:nth-child(6) { animation-delay: 0.6s; }
-.form-group:nth-child(7) { animation-delay: 0.7s; }
-.form-group:nth-child(8) { animation-delay: 0.8s; }
-.form-group:nth-child(9) { animation-delay: 0.9s; }
-.form-group:nth-child(10) { animation-delay: 1.0s; }
-.form-group:nth-child(11) { animation-delay: 1.1s; }
-.form-group:nth-child(12) { animation-delay: 1.2s; }
-
-
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.form-label {
-    display: block;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--apple-black);
-    margin-bottom: var(--spacing-xs);
-    transition: color 0.2s ease;
-}
-
-.form-input {
-    width: 100%;
-    padding: var(--spacing-md) var(--spacing-lg);
-    border: 2px solid rgba(134, 134, 139, 0.2);
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.9);
-    font-size: 1rem;
-    font-family: inherit;
-    color: var(--apple-black);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    outline: none;
-    backdrop-filter: blur(10px);
-}
-
-.form-input:focus {
-    border-color: var(--apple-blue);
-    background: var(--apple-white);
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
-    transform: scale(1.01);
-}
-
-.form-input::placeholder {
-    color: var(--apple-gray-1);
-}
-
-/* Input Group with Dropdown */
-.input-group {
-    display: flex;
-    gap: var(--spacing-sm);
-    align-items: flex-end;
-}
-
-.input-group .form-input {
-    flex: 1;
-}
-
-.form-select {
-    padding: var(--spacing-md) var(--spacing-lg);
-    border: 2px solid rgba(134, 134, 139, 0.2);
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.9);
-    font-size: 1rem;
-    font-family: inherit;
-    color: var(--apple-black);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    outline: none;
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-    min-width: 120px;
-}
-
-.form-select:focus {
-    border-color: var(--apple-blue);
-    background: var(--apple-white);
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
-}
-
-.form-help {
-    font-size: 0.875rem;
-    color: var(--apple-gray-1);
-    margin-top: var(--spacing-xs);
-    line-height: 1.4;
-}
-
-/* Button Styling */
-.btn-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-md) var(--spacing-xl);
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: var(--apple-white);
-    background: linear-gradient(135deg, var(--apple-blue) 0%, #0056b3 100%);
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    text-decoration: none;
-    position: relative;
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    margin: var(--spacing-xl) auto;
-    min-width: 200px;
-}
-
-.btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-.btn-primary:hover::before {
-    left: 100%;
-}
-
-.btn-primary:active {
-    transform: translateY(0);
-}
-
-.btn-secondary {
-    width: 100%;
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--apple-blue);
-    background: rgba(0, 122, 255, 0.08);
-    border: 1px solid rgba(0, 122, 255, 0.2);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin-top: var(--spacing-md);
-}
-
-.btn-secondary:hover {
-    background: rgba(0, 122, 255, 0.12);
-    border-color: rgba(0, 122, 255, 0.3);
-}
-
-/* Script Output */
-.script-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: var(--spacing-xl);
-    margin-top: var(--spacing-xl);
-}
-
-.script-output {
-    background: var(--apple-surface);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-md);
-    transition: all 0.3s ease;
-    animation: slideInUp 0.6s ease forwards;
-    opacity: 0;
-    transform: translateY(30px);
-}
-
-.script-output:nth-child(1) { animation-delay: 0.1s; }
-.script-output:nth-child(2) { animation-delay: 0.2s; }
-
-@keyframes slideInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.script-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--apple-black);
-    margin-bottom: var(--spacing-sm);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-}
-
-.script-description {
-    font-size: 0.95rem;
-    color: var(--apple-gray-2);
-    margin-bottom: var(--spacing-md);
-    line-height: 1.4;
-}
-
-.script-textarea {
-    width: 100%;
-    height: 300px;
-    padding: var(--spacing-md);
-    border: 1px solid rgba(134, 134, 139, 0.2);
-    border-radius: var(--radius-sm);
-    background: rgba(28, 28, 30, 0.95);
-    color: var(--apple-green);
-    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    resize: vertical;
-    outline: none;
-    transition: all 0.2s ease;
-}
-
-.script-textarea:focus {
-    border-color: var(--apple-blue);
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
-}
-
-/* Instructions Collapsible */
-.instructions {
-    margin-top: var(--spacing-xl);
-    border: 1px solid rgba(134, 134, 139, 0.2);
-    border-radius: var(--radius-lg);
-    background: var(--apple-surface);
-    backdrop-filter: blur(20px) saturate(180%);
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.instructions[open] {
-    box-shadow: var(--shadow-md);
-}
-
-.instructions summary {
-    padding: var(--spacing-lg);
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: var(--apple-blue);
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    transition: all 0.2s ease;
-    user-select: none;
-}
-
-.instructions summary:hover {
-    background: rgba(0, 122, 255, 0.05);
-}
-
-.instructions summary::-webkit-details-marker {
-    display: none;
-}
-
-.instructions-content {
-    padding: 0 var(--spacing-lg) var(--spacing-lg);
-    border-top: 1px solid rgba(134, 134, 139, 0.1);
-    animation: expandContent 0.3s ease forwards;
-}
-
-@keyframes expandContent {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.instructions h4 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--apple-black);
-    margin-bottom: var(--spacing-md);
-}
-
-.instructions ol {
-    padding-left: var(--spacing-lg);
-    color: var(--apple-gray-2);
-}
-
-.instructions li {
-    margin-bottom: var(--spacing-sm);
-    line-height: 1.5;
-}
-
-.instructions code {
-    background: rgba(134, 134, 139, 0.15);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
-    font-size: 0.875rem;
-    color: var(--apple-black);
-}
-
-/* Loading Animation */
-.loading {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-}
-
-.loading-dots {
-    display: flex;
-    gap: 4px;
-}
-
-.loading-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: currentColor;
-    animation: loadingDot 1.5s ease-in-out infinite;
-}
-
-.loading-dot:nth-child(1) { animation-delay: 0s; }
-.loading-dot:nth-child(2) { animation-delay: 0.2s; }
-.loading-dot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes loadingDot {
-    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-    40% { opacity: 1; transform: scale(1); }
-}
-
-/* Success Animation */
-.success {
-    color: var(--apple-green);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        padding: var(--spacing-md);
-    }
-
-    .hero {
-        padding: var(--spacing-xl) 0;
-    }
-
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-
-    .script-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-lg);
-    }
-
-    .section-card {
-        padding: var(--spacing-lg);
-    }
-
-    .btn-primary {
-        width: 100%;
-    }
-
-    .input-group {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .form-select {
-        min-width: auto;
-        margin-bottom: var(--spacing-sm);
-    }
-}
-
-@media (max-width: 480px) {
-    .hero h1 {
-        font-size: 2rem;
-    }
-
-    .hero .subtitle {
-        font-size: 1.125rem;
-    }
-
-    .script-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation: none !important;
-        transition: none !important;
-    }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --apple-surface: rgba(28, 28, 30, 0.8);
-        --apple-gray-6: #1c1c1e;
-    }
-
-    body {
-        background: linear-gradient(135deg, var(--apple-gray-5) 0%, var(--apple-gray-4) 100%);
-        color: var(--apple-white);
-    }
-
-    .hero h1,
-    .section-title,
-    .form-label {
-        color: var(--apple-white);
-    }
-}
+        /* General Styling */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background: url('https://www.zollotech.com/wp-content/uploads/2021/12/iOS-16-wallpaper-gradient-wave-by-Hk3ToN-scaled.jpg') no-repeat center center fixed;
+            background-size: cover;
+            transition: background 0.5s ease-in-out;
+        }
+        body.offline {
+            background: linear-gradient(135deg, #007aff, #5ac8fa, #4cd964, #ff9500, #ff2d55);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #555;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .box {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.75); /* Transparency applied */
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+        .dropdown, .input-group {
+            margin: 10px 0;
+        }
+        select, input, button, textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: box-shadow 0.3s;
+        }
+        select:focus, input:focus, button:focus, textarea:focus {
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.8);
+        }
+        button {
+            background: #007aff;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        textarea {
+            height: 150px;
+            resize: none;
+        }
+        .instructions {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .toggle-section {
+            cursor: pointer;
+            font-weight: bold;
+            color: #007aff;
+            margin-bottom: 10px;
+        }
+        .toggle-section:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1>FFMPEG Script Generator</h1>
-            <p class="subtitle">Designed to be powerful.</p>
-            <p class="description">
-                Create professional batch and shell scripts for video conversion with ease.
-                Simply configure your parameters and get ready-to-use scripts for Windows and macOS/Linux.
-                <br><br>
-                <strong>Requirements:</strong> FFMPEG must be installed and accessible in your system's PATH.
-                Download from <a href="https://ffmpeg.org/download.html" target="_blank" class="ffmpeg-link">ffmpeg.org</a>.
-            </p>
-        </section>
+        <h1>FFMPEG Script Generator</h1>
+        <h2>Create Batch Scripts with Advanced Parameters</h2>
 
-        <!-- Input Parameters -->
-        <section class="section-card">
-            <h2 class="section-title">Configure Parameters</h2>
-            <form id="paramsForm">
-                <div class="form-group">
-                    <label for="resolution" class="form-label">Resolution</label>
-                    <input type="text" id="resolution" class="form-input" placeholder="e.g., 1920x1080">
-                    <small class="form-help">Optional. Leave blank to keep original resolution. Examples: 1920x1080, 1280x720, 3840x2160</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="videoCodec" class="form-label">Video Codec</label>
-                    <div class="input-group">
-                        <input type="text" id="videoCodec" class="form-input" value="libx264">
-                        <select id="videoCodecSelect" class="form-select">
-                            <option value="">Quick Select</option>
-                            <option value="libx264">H.264 (libx264)</option>
-                            <option value="libx265">H.265 (libx265)</option>
-                            <option value="libvpx-vp9">VP9 (libvpx-vp9)</option>
-                            <option value="av1_nvenc">AV1 (NVIDIA NVENC)</option>
-                            <option value="h264_nvenc">H.264 (NVIDIA NVENC)</option>
-                            <option value="hevc_nvenc">H.265 (NVIDIA NVENC)</option>
-                            <option value="h264_videotoolbox">H.264 (Apple VideoToolbox)</option>
-                            <option value="hevc_videotoolbox">H.265 (Apple VideoToolbox)</option>
-                            <option value="copy">Copy (no re-encode)</option>
-                        </select>
-                    </div>
-                    <small class="form-help">Video encoder to use. Examples: libx264, libx265, libvpx-vp9, copy</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="audioCodec" class="form-label">Audio Codec</label>
-                    <div class="input-group">
-                        <input type="text" id="audioCodec" class="form-input" value="aac">
-                        <select id="audioCodecSelect" class="form-select">
-                            <option value="">Quick Select</option>
-                            <option value="aac">AAC</option>
-                            <option value="libopus">Opus (libopus)</option>
-                            <option value="libmp3lame">MP3 (libmp3lame)</option>
-                            <option value="ac3">AC3</option>
-                            <option value="eac3">E-AC3</option>
-                            <option value="flac">FLAC (Lossless)</option>
-                            <option value="alac">ALAC (Lossless)</option>
-                            <option value="copy">Copy (no re-encode)</option>
-                        </select>
-                    </div>
-                    <small class="form-help">Audio encoder to use. Examples: aac, libopus, libmp3lame, copy</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="audioBitrateOption" class="form-label">Audio Bitrate</label>
-                    <select id="audioBitrateOption" class="form-select">
-                        <option value="">(auto)</option>
-                        <option value="96k">96 kbps</option>
-                        <option value="128k">128 kbps</option>
-                        <option value="160k">160 kbps</option>
-                        <option value="192k">192 kbps</option>
-                        <option value="256k">256 kbps</option>
-                        <option value="320k">320 kbps</option>
+        <!-- Video Parameters -->
+        <div class="box">
+            <div class="toggle-section" onclick="toggleSection('video-settings')">Video Settings ▼</div>
+            <div id="video-settings">
+                <div class="dropdown">
+                    <label for="vcodec">Video Codec:</label>
+                    <select id="vcodec">
+                        <option value="">None</option>
+                        <option value="libx264">H.264 (libx264)</option>
+                        <option value="libx265">H.265 (libx265)</option>
+                        <option value="mpeg2video">MPEG-2</option>
+                        <option value="vp9">VP9</option>
                     </select>
-                    <small class="form-help">Audio bitrate. Select "(auto)" to let FFMPEG decide or if audio codec is "copy".</small>
                 </div>
-
-                <div class="form-group">
-                    <label for="crfValue" class="form-label">CRF (Constant Rate Factor)</label>
-                    <input type="number" id="crfValue" class="form-input" placeholder="e.g., 18 (H.264/5), 30 (VP9)" value="18">
-                    <small class="form-help">0-51 (H.264/H.265), 0-63 (VP9). Lower is better quality. Overrides Video Bitrate. Ignored if video codec is "copy" or hardware accelerated.</small>
+                <div class="input-group">
+                    <label for="vb">Video Bitrate:</label>
+                    <input type="text" id="vb" placeholder="e.g., 5000k">
                 </div>
-
-                <div class="form-group">
-                    <label for="presetOption" class="form-label">Preset</label>
-                    <select id="presetOption" class="form-select">
-                        <option value="medium">Medium (Default)</option>
-                        <option value="ultrafast">Ultrafast</option>
-                        <option value="superfast">Superfast</option>
-                        <option value="veryfast">Veryfast</option>
-                        <option value="faster">Faster</option>
-                        <option value="fast">Fast</option>
-                        <option value="slow">Slow</option>
-                        <option value="slower">Slower</option>
-                        <option value="veryslow">Veryslow</option>
-                        <option value="placebo">Placebo (not recommended)</option>
-                    </select>
-                    <small class="form-help">Encoding preset. Slower presets offer better compression. Ignored if video codec is "copy".</small>
+                <div class="input-group">
+                    <label for="framerate">Frame Rate:</label>
+                    <input type="text" id="framerate" placeholder="e.g., 30">
                 </div>
-
-                <div class="form-group">
-                    <label for="pixelFormatOption" class="form-label">Pixel Format</label>
-                    <select id="pixelFormatOption" class="form-select">
-                        <option value="">(auto)</option>
-                        <option value="yuv420p">yuv420p (Most Common)</option>
-                        <option value="yuv420p10le">yuv420p10le (10-bit)</option>
-                        <option value="yuv444p">yuv444p</option>
-                        <option value="nv12">nv12</option>
-                        <option value="p010le">p010le (10-bit for NVENC)</option>
-                    </select>
-                    <small class="form-help">Pixel format. "(auto)" is usually fine. Use yuv420p for broad compatibility. Ignored if video codec is "copy".</small>
+                <div class="input-group">
+                    <label for="vf">Video Filters:</label>
+                    <input type="text" id="vf" placeholder="e.g., scale=1920:1080">
                 </div>
-
-                <div class="form-group">
-                    <label for="videoProfileOption" class="form-label">Video Profile</label>
-                    <select id="videoProfileOption" class="form-select">
-                        <option value="">(auto)</option>
-                        <option value="baseline">Baseline</option>
-                        <option value="main">Main</option>
-                        <option value="high">High</option>
-                        <option value="high10">High 10 (10-bit)</option>
-                        <option value="main10">Main 10 (10-bit, HEVC)</option>
-                        <!-- Add other relevant profiles as needed -->
-                    </select>
-                    <small class="form-help">H.264/H.265 profile. "(auto)" is usually fine. Ignored if video codec is "copy".</small>
+                <div class="input-group">
+                    <label for="aspect">Aspect Ratio:</label>
+                    <input type="text" id="aspect" placeholder="e.g., 16:9">
                 </div>
-
-                <div class="form-group">
-                    <label for="levelOption" class="form-label">Level</label>
-                    <select id="levelOption" class="form-select">
-                        <option value="">(auto)</option>
-                        <option value="3.0">3.0</option>
-                        <option value="3.1">3.1</option>
-                        <option value="3.2">3.2</option>
-                        <option value="4.0">4.0</option>
-                        <option value="4.1">4.1</option>
-                        <option value="4.2">4.2</option>
-                        <option value="5.0">5.0</option>
-                        <option value="5.1">5.1</option>
-                        <option value="5.2">5.2</option>
-                        <option value="6.0">6.0</option>
-                        <option value="6.1">6.1</option>
-                        <option value="6.2">6.2</option>
-                    </select>
-                    <small class="form-help">H.264/H.265 level. "(auto)" is usually fine. Ignored if video codec is "copy".</small>
+                <div class="input-group">
+                    <label for="preset">Preset:</label>
+                    <input type="text" id="preset" placeholder="e.g., ultrafast">
                 </div>
-
-                <div class="form-group">
-                    <label for="bfOption" class="form-label">B-frames (bf)</label>
-                    <select id="bfOption" class="form-select">
-                        <option value="">(auto)</option>
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3 (Common Default)</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="8">8</option>
-                        <option value="16">16 (Max for H.264)</option>
-                    </select>
-                    <small class="form-help">Maximum number of B-frames. "(auto)" lets encoder decide. Ignored if video codec is "copy".</small>
+                <div class="input-group">
+                    <label for="profile">Profile:</label>
+                    <input type="text" id="profile" placeholder="e.g., high">
                 </div>
-
-                <div class="form-group">
-                    <label for="gopSizeOption" class="form-label">GOP size (g)</label>
-                    <input type="number" id="gopSizeOption" class="form-input" placeholder="e.g., 250 (auto)">
-                    <small class="form-help">Group of Pictures size (keyframe interval). Empty for auto. Ignored if video codec is "copy".</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="movflagsOption" class="form-label">Movflags</label>
-                    <select id="movflagsOption" class="form-select">
-                        <option value="">(none)</option>
-                        <option value="faststart">+faststart (for web streaming)</option>
-                        <option value="rtphint">+rtphint (for RTP streaming)</option>
-                        <option value="frag_keyframe+empty_moov">+frag_keyframe+empty_moov (for fragmented MP4)</option>
-                    </select>
-                    <small class="form-help">MP4-specific flags (movflags). E.g., +faststart moves metadata to the beginning. Not applicable to all containers.</small>
-                </div>
-
-            </form>
-
-            <button type="button" id="generateBtn" class="btn-primary">
-                <span id="btnText">⚙️ Generate Scripts</span>
-            </button>
-        </section>
-
-        <!-- Generated Scripts -->
-        <section class="section-card" id="scriptsSection" style="display: none;">
-            <h2 class="section-title">Generated Scripts</h2>
-            <div class="script-grid">
-                <div class="script-output">
-                    <h3 class="script-title">🪟 Windows Batch Script</h3>
-                    <p class="script-description">
-                        Save as <code>.bat</code> file (e.g., <code>convert_video.bat</code>).
-                        Drag and drop video files onto the script to convert them.
-                    </p>
-                    <textarea id="windowsScript" class="script-textarea" readonly placeholder="Windows batch script will appear here..."></textarea>
-                    <button type="button" id="copyWindowsBtn" class="btn-secondary">📄 Copy Windows Script</button>
-                </div>
-
-                <div class="script-output">
-                    <h3 class="script-title">🐧 Linux/macOS Shell Script</h3>
-                    <p class="script-description">
-                        Save as <code>.sh</code> file (e.g., <code>convert_video.sh</code>).
-                        Make executable with <code>chmod +x convert_video.sh</code>.
-                    </p>
-                    <textarea id="linuxScript" class="script-textarea" readonly placeholder="Linux/macOS shell script will appear here..."></textarea>
-                    <button type="button" id="copyLinuxBtn" class="btn-secondary">📄 Copy Linux Script</button>
+                <div class="input-group">
+                    <label for="level">Level:</label>
+                    <input type="text" id="level" placeholder="e.g., 4.1">
                 </div>
             </div>
-        </section>
+        </div>
+
+        <!-- Audio Parameters -->
+        <div class="box">
+            <div class="toggle-section" onclick="toggleSection('audio-settings')">Audio Settings ▼</div>
+            <div id="audio-settings">
+                <div class="dropdown">
+                    <label for="acodec">Audio Codec:</label>
+                    <select id="acodec">
+                        <option value="">None</option>
+                        <option value="aac">AAC</option>
+                        <option value="libmp3lame">MP3 (libmp3lame)</option>
+                        <option value="opus">Opus</option>
+                        <option value="flac">FLAC</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="ab">Audio Bitrate:</label>
+                    <input type="text" id="ab" placeholder="e.g., 128k">
+                </div>
+                <div class="input-group">
+                    <label for="ar">Audio Sampling Rate:</label>
+                    <input type="text" id="ar" placeholder="e.g., 44100">
+                </div>
+                <div class="input-group">
+                    <label for="ac">Audio Channels:</label>
+                    <input type="text" id="ac" placeholder="e.g., 2">
+                </div>
+                <div class="input-group">
+                    <label for="vol">Volume Adjustment:</label>
+                    <input type="text" id="vol" placeholder="e.g., 256">
+                </div>
+                <div class="input-group">
+                    <label for="af">Audio Filters:</label>
+                    <input type="text" id="af" placeholder="e.g., volume=2.0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Resulting script -->
+        <textarea id="generated-script" readonly placeholder="Generated batch script will appear here..."></textarea>
+
+        <!-- Save and Load buttons -->
+        <button id="save-config">Save Configuration</button>
+        <button id="load-config">Load Configuration</button>
 
         <!-- Instructions -->
-        <details class="instructions">
-            <summary>ℹ️ Detailed Instructions for macOS Users</summary>
-            <div class="instructions-content">
-                <h4>Using Shell Scripts on macOS</h4>
-                <p>The Linux Shell Script generated above works perfectly on macOS. Follow these steps:</p>
-                <ol>
-                    <li>Open <strong>Terminal</strong> (found in <code>/Applications/Utilities/</code> or search with Spotlight)</li>
-                    <li>Navigate to your script's location: <code>cd ~/Downloads</code></li>
-                    <li>Make the script executable: <code>chmod +x your_script.sh</code></li>
-                    <li>Run the script: <code>./your_script.sh video1.mp4 video2.mkv</code></li>
-                    <li><strong>Install FFMPEG:</strong> Use Homebrew: <code>brew install ffmpeg</code>
-                        <br>Don't have Homebrew? Install it from <a href="https://brew.sh/" target="_blank">brew.sh</a></li>
-                </ol>
-            </div>
-        </details>
+        <div class="instructions">
+            <h3>Mac Instructions:</h3>
+            <p>To run the batch script on Mac, open Terminal, navigate to the script's folder, and use <code>sh script_name.sh</code> to execute it.</p>
+        </div>
     </div>
 
     <script>
-        'use strict';
+        // JavaScript to handle foldable sections
+        const toggleSection = (sectionId) => {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('hidden');
+        };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const resolutionEl = document.getElementById('resolution');
-            const videoCodecEl = document.getElementById('videoCodec');
-            const videoCodecSelectEl = document.getElementById('videoCodecSelect');
-            const audioCodecEl = document.getElementById('audioCodec');
-            const audioCodecSelectEl = document.getElementById('audioCodecSelect');
-            const audioBitrateOptionEl = document.getElementById('audioBitrateOption');
-            const crfValueEl = document.getElementById('crfValue');
-            const presetOptionEl = document.getElementById('presetOption');
-            const pixelFormatOptionEl = document.getElementById('pixelFormatOption');
-            const videoProfileOptionEl = document.getElementById('videoProfileOption');
-            const levelOptionEl = document.getElementById('levelOption');
-            const bfOptionEl = document.getElementById('bfOption');
-            const gopSizeOptionEl = document.getElementById('gopSizeOption');
-            const movflagsOptionEl = document.getElementById('movflagsOption');
+        // Ensure sections are opened by default on page load
+        window.onload = () => {
+            document.getElementById('video-settings').classList.remove('hidden');
+            document.getElementById('audio-settings').classList.remove('hidden');
+        };
 
-            const generateBtn = document.getElementById('generateBtn');
-            const btnText = document.getElementById('btnText');
-            const windowsScriptArea = document.getElementById('windowsScript');
-            const linuxScriptArea = document.getElementById('linuxScript');
-            const copyWindowsBtn = document.getElementById('copyWindowsBtn');
-            const copyLinuxBtn = document.getElementById('copyLinuxBtn');
-            const scriptsSection = document.getElementById('scriptsSection');
+        // Existing script generation logic
+        const vcodecDropdown = document.getElementById('vcodec');
+        const vbInput = document.getElementById('vb');
+        const framerateInput = document.getElementById('framerate');
+        const vfInput = document.getElementById('vf');
+        const aspectInput = document.getElementById('aspect');
+        const presetInput = document.getElementById('preset');
+        const profileInput = document.getElementById('profile');
+        const levelInput = document.getElementById('level');
 
-            // Helper function to handle quick select for codecs
-            function setupCodecQuickSelect(textInputEl, selectInputEl) {
-                if (selectInputEl) {
-                    selectInputEl.addEventListener('change', function() {
-                        const selectedValue = this.value;
-                        if (selectedValue) {
-                            textInputEl.value = selectedValue;
-                            textInputEl.focus();
-                            textInputEl.dispatchEvent(new Event('input', { bubbles: true }));
-                            this.value = ''; // Reset select
-                        }
-                    });
-                }
-            }
+        const acodecDropdown = document.getElementById('acodec');
+        const abInput = document.getElementById('ab');
+        const arInput = document.getElementById('ar');
+        const acInput = document.getElementById('ac');
+        const volInput = document.getElementById('vol');
+        const afInput = document.getElementById('af');
+        const generatedScript = document.getElementById('generated-script');
 
-            // setupCodecQuickSelect(videoCodecEl, videoCodecSelectEl); // Call for videoCodecSelectEl remains commented
-            setupCodecQuickSelect(audioCodecEl, audioCodecSelectEl); // Call for audioCodecSelectEl remains active
+        const addParameter = (flag, value) => value ? `${flag} ${value}` : '';
 
-            // Generate FFMPEG Command
-            function generateFfmpegCommand(params) {
-                const commandParts = ['ffmpeg', '-y'];
-                commandParts.push('-i', '"$INPUT_FILE"');
+        const updateScript = () => {
+            const vcodec = addParameter('-c:v', vcodecDropdown.value);
+            const vb = addParameter('-b:v', vbInput.value);
+            const framerate = addParameter('-r', framerateInput.value);
+            const vf = addParameter('-vf', vfInput.value);
+            const aspect = addParameter('-aspect', aspectInput.value);
+            const preset = addParameter('-preset', presetInput.value);
+            const profile = addParameter('-profile:v', profileInput.value);
+            const level = addParameter('-level', levelInput.value);
 
-                if (params.resolution) {
-                    commandParts.push('-s', params.resolution);
-                }
+            const acodec = addParameter('-c:a', acodecDropdown.value);
+            const ab = addParameter('-b:a', abInput.value);
+            const ar = addParameter('-ar', arInput.value);
+            const ac = addParameter('-ac', acInput.value);
+            const vol = addParameter('-vol', volInput.value);
+            const af = addParameter('-af', afInput.value);
 
-                // Video Codec specific handling
-                const isVideoCopy = params.videoCodec.toLowerCase() === 'copy';
+            generatedScript.value = `
+@echo off
+setlocal enabledelayedexpansion
 
-                commandParts.push('-c:v', params.videoCodec || 'libx264');
-
-                if (!isVideoCopy) { // Parameters below are ignored if video is copied
-                    if (params.crf && !params.videoCodec.includes('nvenc') && !params.videoCodec.includes('videotoolbox')) { // CRF for software encoders
-                        commandParts.push('-crf', params.crf);
-                    }
-                    if (params.preset) {
-                        commandParts.push('-preset', params.preset);
-                    }
-                    if (params.pixelFormat) {
-                        commandParts.push('-pix_fmt', params.pixelFormat);
-                    }
-                    if (params.videoProfile) {
-                        commandParts.push('-profile:v', params.videoProfile);
-                    }
-                    if (params.level) {
-                        commandParts.push('-level:v', params.level); // -level:v is more specific
-                    }
-                    if (params.bf) {
-                        commandParts.push('-bf', params.bf);
-                    }
-                    if (params.gopSize) {
-                        commandParts.push('-g', params.gopSize);
-                    }
-                }
-
-                // Audio Codec specific handling
-                const isAudioCopy = params.audioCodec.toLowerCase() === 'copy';
-                commandParts.push('-c:a', params.audioCodec || 'aac');
-
-                if (!isAudioCopy && params.audioBitrate) { // Audio bitrate ignored if audio is copied
-                    commandParts.push('-b:a', params.audioBitrate);
-                }
-
-                if (params.movflags) {
-                    commandParts.push('-movflags', params.movflags);
-                }
-
-                commandParts.push('"$OUTPUT_FILE_REENCODED"');
-                return commandParts.join(' ');
-            }
-
-            // Generate Windows Script (remains largely the same)
-            function generateWindowsScript(ffmpegCommand) {
-                return `@echo off
-REM FFMPEG Video Conversion Script for Windows
-REM Drag and drop video files onto this script to convert them
-REM Generated by FFMPEG Script Generator
-
-SETLOCAL ENABLEDELAYEDEXPANSION
-
-echo.
-echo ========================================
-echo    FFMPEG Video Conversion Tool
-echo ========================================
-echo.
-
-if "%~1"=="" (
-    echo No files provided. Please drag and drop video files onto this script.
-    echo.
-    pause
-    exit /b 1
+for %%F in (*.*) do (
+    ffmpeg -i "%%F" ${vcodec} ${vb} ${framerate} ${vf} ${aspect} ${preset} ${profile} ${level} ${acodec} ${ab} ${ar} ${ac} ${vol} ${af} "output_%%~nF.mp4"
 )
+            `.trim();
+        };
 
-REM Loop through all dragged files
-FOR %%A IN (%*) DO (
-    echo Processing: "%%~nxA"
-    echo.
+        [vcodecDropdown, vbInput, framerateInput, vfInput, aspectInput, presetInput, profileInput, levelInput,
+         acodecDropdown, abInput, arInput, acInput, volInput, afInput].forEach(element => {
+            element.addEventListener('input', updateScript);
+        });
 
-    REM Get file components
-    SET "INPUT_FILE_PATH=%%~A"
-    SET "BASENAME=%%~nA"
-    SET "EXTENSION=%%~xA"
+        document.getElementById('save-config').addEventListener('click', () => {
+            const config = {
+                vcodec: vcodecDropdown.value,
+                vb: vbInput.value,
+                framerate: framerateInput.value,
+                vf: vfInput.value,
+                aspect: aspectInput.value,
+                preset: presetInput.value,
+                profile: profileInput.value,
+                level: levelInput.value,
+                acodec: acodecDropdown.value,
+                ab: abInput.value,
+                ar: arInput.value,
+                acInput: acInput.value,
+                volInput: volInput.value,
+                afInput: afInput.value
+            };
+            localStorage.setItem('ffmpegConfig', JSON.stringify(config));
+            alert('Configuration Saved!');
+        });
 
-    REM Create output filename
-    SET "OUTPUT_FILENAME=!BASENAME!_reencoded!EXTENSION!"
-
-    echo Input:  "%%~nxA"
-    echo Output: "!OUTPUT_FILENAME!"
-    echo.
-
-    REM Prepare FFMPEG command
-    SET "FFMPEG_CMD=${ffmpegCommand}"
-    SET "CMD_TEMP=!FFMPEG_CMD:"$INPUT_FILE"="%%~A"!"
-    SET "FINAL_CMD=!CMD_TEMP:"$OUTPUT_FILE_REENCODED"="!OUTPUT_FILENAME!"!"
-
-    REM Execute conversion
-    echo Executing: !FINAL_CMD!
-    echo.
-    !FINAL_CMD!
-
-    if !ERRORLEVEL! EQU 0 (
-        echo ✓ Successfully converted: "%%~nxA"
-    ) else (
-        echo ✗ Error converting: "%%~nxA"
-    )
-    echo.
-    echo ----------------------------------------
-    echo.
-)
-
-echo All files processed.
-echo.
-pause`;
+        document.getElementById('load-config').addEventListener('click', () => {
+            const config = JSON.parse(localStorage.getItem('ffmpegConfig'));
+            if (config) {
+                vcodecDropdown.value = config.vcodec;
+                vbInput.value = config.vb;
+                framerateInput.value = config.framerate;
+                vfInput.value = config.vf;
+                aspectInput.value = config.aspect;
+                presetInput.value = config.preset;
+                profileInput.value = config.profile;
+                levelInput.value = config.level;
+                acodecDropdown.value = config.acodec;
+                abInput.value = config.ab;
+                arInput.value = config.ar;
+                acInput.value = config.ac;
+                volInput.value = config.vol;
+                afInput.value = config.af;
+                updateScript();
+                alert('Configuration Loaded!');
+            } else {
+                alert('No configuration found!');
             }
+        });
 
-            // Generate Linux Script (remains largely the same)
-            function generateLinuxScript(ffmpegCommand) {
-                const escapedCommand = ffmpegCommand.replace(/`/g, '\\`');
-
-                return `#!/bin/bash
-# FFMPEG Video Conversion Script for Linux/macOS
-# Usage: ./script.sh file1.mp4 file2.mkv ...
-# Generated by FFMPEG Script Generator
-
-set -euo pipefail
-
-echo
-echo "========================================"
-echo "    FFMPEG Video Conversion Tool"
-echo "========================================"
-echo
-
-if [ "$#" -eq 0 ]; then
-    echo "No files provided."
-    echo
-    echo "Usage: $0 file1.mp4 file2.mkv ..."
-   echo
-   exit 1
-fi
-
-# Check if ffmpeg is installed
-if ! command -v ffmpeg &> /dev/null; then
-   echo "Error: FFMPEG is not installed or not in PATH."
-   echo "Please install FFMPEG first:"
-   echo "  macOS: brew install ffmpeg"
-   echo "  Ubuntu/Debian: sudo apt install ffmpeg"
-   echo
-   exit 1
-fi
-
-for file in "$@"; do
-   echo "Processing: \\"$(basename "$file")\\""
-   echo
-
-   # Check if file exists
-   if [ ! -f "$file" ]; then
-       echo "Warning: File not found: \\"$file\\""
-       echo "Skipping..."
-       echo
-       continue
-   fi
-
-   # Get filename components
-   FILENAME_WITH_EXT="$(basename "$file")"
-   FILENAME_NO_EXT="\${FILENAME_WITH_EXT%.*}"
-   EXTENSION="\${FILENAME_WITH_EXT##*.}"
-
-   # Handle files without extensions
-   if [ "$FILENAME_WITH_EXT" = "$EXTENSION" ]; then
-       OUTPUT_FILENAME="\${FILENAME_WITH_EXT}_reencoded"
-   else
-       OUTPUT_FILENAME="\${FILENAME_NO_EXT}_reencoded.\${EXTENSION}"
-   fi
-
-   echo "Input:  \\"$FILENAME_WITH_EXT\\""
-   echo "Output: \\"$OUTPUT_FILENAME\\""
-   echo
-
-   # Skip if output file already exists
-   if [ -f "$OUTPUT_FILENAME" ]; then
-       echo "Warning: Output file already exists: \\"$OUTPUT_FILENAME\\""
-       echo "Skipping to avoid overwrite..."
-       echo
-       continue
-   fi
-
-   # Prepare FFMPEG command
-   FFMPEG_COMMAND_TEMPLATE="${escapedCommand}"
-
-   # Replace placeholders safely
-   CURRENT_FFMPEG_COMMAND="\${FFMPEG_COMMAND_TEMPLATE//\\"\\$INPUT_FILE\\"/\\"$file\\"}"
-   CURRENT_FFMPEG_COMMAND="\${CURRENT_FFMPEG_COMMAND//\\"\\$OUTPUT_FILE_REENCODED\\"/\\"$OUTPUT_FILENAME\\"}"
-
-   echo "Executing: $CURRENT_FFMPEG_COMMAND"
-   echo
-
-   # Execute conversion
-   if eval "$CURRENT_FFMPEG_COMMAND"; then
-       echo "✓ Successfully converted: \\"$FILENAME_WITH_EXT\\""
-   else
-       echo "✗ Error converting: \\"$FILENAME_WITH_EXT\\""
-   fi
-
-   echo
-   echo "----------------------------------------"
-   echo
-done
-
-echo "All files processed."
-echo`;
-           }
-
-           // Copy to Clipboard Function
-           async function copyToClipboard(text, button, originalText) {
-               try {
-                   if (navigator.clipboard) {
-                       await navigator.clipboard.writeText(text);
-                       button.innerHTML = '<span class="success">✓ Copied!</span>';
-                       button.disabled = true;
-
-                       setTimeout(() => {
-                           button.innerHTML = originalText;
-                           button.disabled = false;
-                       }, 2000);
-                   } else {
-                       // Fallback for older browsers
-                       const textArea = document.createElement('textarea');
-                       textArea.value = text;
-                       textArea.style.position = 'fixed';
-                       textArea.style.opacity = '0';
-                       document.body.appendChild(textArea);
-                       textArea.select();
-                       document.execCommand('copy');
-                       document.body.removeChild(textArea);
-
-                       button.innerHTML = '<span class="success">✓ Copied!</span>';
-                       setTimeout(() => {
-                           button.innerHTML = originalText;
-                       }, 2000);
-                   }
-               } catch (err) {
-                   console.error('Failed to copy:', err);
-                   button.innerHTML = '✗ Copy Failed';
-                   setTimeout(() => {
-                       button.innerHTML = originalText;
-                   }, 2000);
-               }
-           }
-
-           // Show Loading Animation
-           function showLoading() {
-               btnText.innerHTML = `
-                   <span class="loading">
-                       <span>Generating</span>
-                       <span class="loading-dots">
-                           <span class="loading-dot"></span>
-                           <span class="loading-dot"></span>
-                           <span class="loading-dot"></span>
-                       </span>
-                   </span>
-               `;
-               generateBtn.disabled = true;
-           }
-
-           // Hide Loading Animation
-           function hideLoading() {
-               btnText.innerHTML = '⚙️ Generate Scripts';
-               generateBtn.disabled = false;
-           }
-
-           // Show Scripts Section with Animation
-           function showScriptsSection() {
-               scriptsSection.style.display = 'block';
-               setTimeout(() => {
-                   scriptsSection.scrollIntoView({
-                       behavior: 'smooth',
-                       block: 'start'
-                   });
-               }, 100);
-           }
-
-           // Handle Generate Scripts
-           function handleGenerateScripts() {
-               showLoading();
-
-               setTimeout(() => {
-                   const params = {
-                       resolution: resolutionEl.value.trim(),
-                       videoCodec: videoCodecEl.value.trim() || 'libx264',
-                       audioCodec: audioCodecEl.value.trim() || 'aac',
-                       audioBitrate: audioBitrateOptionEl.value,
-                       crf: crfValueEl.value.trim(),
-                       preset: presetOptionEl.value,
-                       pixelFormat: pixelFormatOptionEl.value,
-                       videoProfile: videoProfileOptionEl.value,
-                       level: levelOptionEl.value,
-                       bf: bfOptionEl.value,
-                       gopSize: gopSizeOptionEl.value.trim(),
-                       movflags: movflagsOptionEl.value
-                   };
-
-                   // Validate CRF and GOP size (must be numbers if provided)
-                   if (params.crf && isNaN(parseFloat(params.crf))) {
-                       alert("CRF value must be a number.");
-                       hideLoading();
-                       return;
-                   }
-                   if (params.gopSize && (isNaN(parseInt(params.gopSize)) || parseInt(params.gopSize) <= 0)) {
-                       alert("GOP size must be a positive number.");
-                       hideLoading();
-                       return;
-                   }
-
-                   console.log('Parameters:', params);
-
-                   const ffmpegCommand = generateFfmpegCommand(params);
-                   console.log('FFMPEG Command:', ffmpegCommand);
-
-                   const windowsScript = generateWindowsScript(ffmpegCommand);
-                   const linuxScript = generateLinuxScript(ffmpegCommand);
-
-                   windowsScriptArea.value = windowsScript;
-                   linuxScriptArea.value = linuxScript;
-
-                   hideLoading();
-                   showScriptsSection();
-               }, 800);
-           }
-
-           // Event Listeners
-           // /* // Temporarily remove the start of the main comment block
-           if (generateBtn) {
-               generateBtn.addEventListener('click', handleGenerateScripts);
-           }
-           /* // Re-start comment block for subsequent listeners
-           if (copyWindowsBtn) {
-               copyWindowsBtn.addEventListener('click', () => {
-                   copyToClipboard(
-                       windowsScriptArea.value,
-                       copyWindowsBtn,
-                       '📄 Copy Windows Script'
-                   );
-               });
-           }
-
-           if (copyLinuxBtn) {
-               copyLinuxBtn.addEventListener('click', () => {
-                   copyToClipboard(
-                       linuxScriptArea.value,
-                       copyLinuxBtn,
-                       '📄 Copy Linux Script'
-                   );
-               });
-           }
-
-           document.addEventListener('keydown', (e) => {
-               if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                   e.preventDefault();
-                   handleGenerateScripts();
-               }
-           });
-
-           window.addEventListener('scroll', () => {
-               const scrolled = window.pageYOffset;
-               const hero = document.querySelector('.hero');
-               if (hero) {
-                   hero.style.transform = `translateY(${scrolled * 0.1}px)`;
-               }
-           });
-           */
-
-           const inputs = [
-               resolutionEl, videoCodecEl, audioCodecEl, crfValueEl, gopSizeOptionEl,
-               audioBitrateOptionEl, presetOptionEl, pixelFormatOptionEl,
-               videoProfileOptionEl, levelOptionEl, bfOptionEl, movflagsOptionEl
-           ];
-           // /* // Remove surrounding comment
-           inputs.forEach(input => {
-               if (input) {
-                   const eventType = (input.tagName === 'SELECT' || input.type === 'number') ? 'change' : 'input';
-                   input.addEventListener(eventType, (e) => {
-                       const label = document.querySelector(`label[for="${e.target.id}"]`);
-                       if (label) {
-                           if (e.target.value.trim() && e.target.value.trim() !== '(auto)' && e.target.value.trim() !== '(none)') {
-                               label.style.color = 'var(--apple-blue)';
-                           } else {
-                               label.style.color = 'var(--apple-black)'; // Or your default label color
-                           }
-                       }
-                   });
-                   // Initial check in case of pre-filled values
-                   if (input.value.trim() && input.value.trim() !== '(auto)' && input.value.trim() !== '(none)') {
-                        const label = document.querySelector(`label[for="${input.id}"]`);
-                        if (label) label.style.color = 'var(--apple-blue)';
-                   }
-               }
-           });
-           // */ // Remove surrounding comment
-
-           console.log('FFMPEG Script Generator initialized successfully with all features!');
-       });
-   </script>
+        window.addEventListener('load', () => {
+            if (!navigator.onLine) {
+                document.body.classList.add('offline');
+            }
+        });
+    </script>
 </body>
 </html>
