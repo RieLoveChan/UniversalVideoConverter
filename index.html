@@ -20,7 +20,7 @@
     --apple-green: #30d158;
     --apple-surface: rgba(255, 255, 255, 0.8);
     --apple-surface-dark: rgba(28, 28, 30, 0.8);
-    
+
     /* Spacing system */
     --spacing-xs: 8px;
     --spacing-sm: 12px;
@@ -29,13 +29,13 @@
     --spacing-xl: 32px;
     --spacing-2xl: 48px;
     --spacing-3xl: 64px;
-    
+
     /* Border radius */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 20px;
-    
+
     /* Shadows */
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -193,6 +193,15 @@ body {
 .form-group:nth-child(2) { animation-delay: 0.2s; }
 .form-group:nth-child(3) { animation-delay: 0.3s; }
 .form-group:nth-child(4) { animation-delay: 0.4s; }
+.form-group:nth-child(5) { animation-delay: 0.5s; }
+.form-group:nth-child(6) { animation-delay: 0.6s; }
+.form-group:nth-child(7) { animation-delay: 0.7s; }
+.form-group:nth-child(8) { animation-delay: 0.8s; }
+.form-group:nth-child(9) { animation-delay: 0.9s; }
+.form-group:nth-child(10) { animation-delay: 1.0s; }
+.form-group:nth-child(11) { animation-delay: 1.1s; }
+.form-group:nth-child(12) { animation-delay: 1.2s; }
+
 
 @keyframes fadeInUp {
     to {
@@ -528,33 +537,33 @@ body {
     .container {
         padding: var(--spacing-md);
     }
-    
+
     .hero {
         padding: var(--spacing-xl) 0;
     }
-    
+
     .hero h1 {
         font-size: 2.5rem;
     }
-    
+
     .script-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-lg);
     }
-    
+
     .section-card {
         padding: var(--spacing-lg);
     }
-    
+
     .btn-primary {
         width: 100%;
     }
-    
+
     .input-group {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .form-select {
         min-width: auto;
         margin-bottom: var(--spacing-sm);
@@ -565,11 +574,11 @@ body {
     .hero h1 {
         font-size: 2rem;
     }
-    
+
     .hero .subtitle {
         font-size: 1.125rem;
     }
-    
+
     .script-grid {
         grid-template-columns: 1fr;
     }
@@ -589,12 +598,12 @@ body {
         --apple-surface: rgba(28, 28, 30, 0.8);
         --apple-gray-6: #1c1c1e;
     }
-    
+
     body {
         background: linear-gradient(135deg, var(--apple-gray-5) 0%, var(--apple-gray-4) 100%);
         color: var(--apple-white);
     }
-    
+
     .hero h1,
     .section-title,
     .form-label {
@@ -610,10 +619,10 @@ body {
             <h1>FFMPEG Script Generator</h1>
             <p class="subtitle">Designed to be powerful.</p>
             <p class="description">
-                Create professional batch and shell scripts for video conversion with ease. 
+                Create professional batch and shell scripts for video conversion with ease.
                 Simply configure your parameters and get ready-to-use scripts for Windows and macOS/Linux.
                 <br><br>
-                <strong>Requirements:</strong> FFMPEG must be installed and accessible in your system's PATH. 
+                <strong>Requirements:</strong> FFMPEG must be installed and accessible in your system's PATH.
                 Download from <a href="https://ffmpeg.org/download.html" target="_blank" class="ffmpeg-link">ffmpeg.org</a>.
             </p>
         </section>
@@ -627,34 +636,165 @@ body {
                     <input type="text" id="resolution" class="form-input" placeholder="e.g., 1920x1080">
                     <small class="form-help">Optional. Leave blank to keep original resolution. Examples: 1920x1080, 1280x720, 3840x2160</small>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="videoCodec" class="form-label">Video Codec</label>
                     <div class="input-group">
                         <input type="text" id="videoCodec" class="form-input" value="libx264">
                         <select id="videoCodecSelect" class="form-select">
                             <option value="">Quick Select</option>
-                            <option value="libx264">H.264</option>
-                            <option value="libx265">H.265</option>
-                            <option value="libvpx-vp9">VP9</option>
+                            <option value="libx264">H.264 (libx264)</option>
+                            <option value="libx265">H.265 (libx265)</option>
+                            <option value="libvpx-vp9">VP9 (libvpx-vp9)</option>
+                            <option value="av1_nvenc">AV1 (NVIDIA NVENC)</option>
+                            <option value="h264_nvenc">H.264 (NVIDIA NVENC)</option>
+                            <option value="hevc_nvenc">H.265 (NVIDIA NVENC)</option>
+                            <option value="h264_videotoolbox">H.264 (Apple VideoToolbox)</option>
+                            <option value="hevc_videotoolbox">H.265 (Apple VideoToolbox)</option>
+                            <option value="copy">Copy (no re-encode)</option>
                         </select>
                     </div>
-                    <small class="form-help">Video encoder to use. Examples: libx264 (H.264), libx265 (H.265), libvpx-vp9 (VP9)</small>
+                    <small class="form-help">Video encoder to use. Examples: libx264, libx265, libvpx-vp9, copy</small>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="audioCodec" class="form-label">Audio Codec</label>
-                    <input type="text" id="audioCodec" class="form-input" value="aac">
-                    <small class="form-help">Audio encoder to use. Examples: aac, libopus, libmp3lame</small>
+                    <div class="input-group">
+                        <input type="text" id="audioCodec" class="form-input" value="aac">
+                        <select id="audioCodecSelect" class="form-select">
+                            <option value="">Quick Select</option>
+                            <option value="aac">AAC</option>
+                            <option value="libopus">Opus (libopus)</option>
+                            <option value="libmp3lame">MP3 (libmp3lame)</option>
+                            <option value="ac3">AC3</option>
+                            <option value="eac3">E-AC3</option>
+                            <option value="flac">FLAC (Lossless)</option>
+                            <option value="alac">ALAC (Lossless)</option>
+                            <option value="copy">Copy (no re-encode)</option>
+                        </select>
+                    </div>
+                    <small class="form-help">Audio encoder to use. Examples: aac, libopus, libmp3lame, copy</small>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="videoBitrate" class="form-label">Video Bitrate</label>
-                    <input type="text" id="videoBitrate" class="form-input" placeholder="e.g., 2M, 1500k">
-                    <small class="form-help">Optional. Leave blank for automatic. Examples: 2M (2 Mbps), 1500k (1.5 Mbps), 500k</small>
+                    <label for="audioBitrateOption" class="form-label">Audio Bitrate</label>
+                    <select id="audioBitrateOption" class="form-select">
+                        <option value="">(auto)</option>
+                        <option value="96k">96 kbps</option>
+                        <option value="128k">128 kbps</option>
+                        <option value="160k">160 kbps</option>
+                        <option value="192k">192 kbps</option>
+                        <option value="256k">256 kbps</option>
+                        <option value="320k">320 kbps</option>
+                    </select>
+                    <small class="form-help">Audio bitrate. Select "(auto)" to let FFMPEG decide or if audio codec is "copy".</small>
                 </div>
+
+                <div class="form-group">
+                    <label for="crfValue" class="form-label">CRF (Constant Rate Factor)</label>
+                    <input type="number" id="crfValue" class="form-input" placeholder="e.g., 18 (H.264/5), 30 (VP9)" value="18">
+                    <small class="form-help">0-51 (H.264/H.265), 0-63 (VP9). Lower is better quality. Overrides Video Bitrate. Ignored if video codec is "copy" or hardware accelerated.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="presetOption" class="form-label">Preset</label>
+                    <select id="presetOption" class="form-select">
+                        <option value="medium">Medium (Default)</option>
+                        <option value="ultrafast">Ultrafast</option>
+                        <option value="superfast">Superfast</option>
+                        <option value="veryfast">Veryfast</option>
+                        <option value="faster">Faster</option>
+                        <option value="fast">Fast</option>
+                        <option value="slow">Slow</option>
+                        <option value="slower">Slower</option>
+                        <option value="veryslow">Veryslow</option>
+                        <option value="placebo">Placebo (not recommended)</option>
+                    </select>
+                    <small class="form-help">Encoding preset. Slower presets offer better compression. Ignored if video codec is "copy".</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="pixelFormatOption" class="form-label">Pixel Format</label>
+                    <select id="pixelFormatOption" class="form-select">
+                        <option value="">(auto)</option>
+                        <option value="yuv420p">yuv420p (Most Common)</option>
+                        <option value="yuv420p10le">yuv420p10le (10-bit)</option>
+                        <option value="yuv444p">yuv444p</option>
+                        <option value="nv12">nv12</option>
+                        <option value="p010le">p010le (10-bit for NVENC)</option>
+                    </select>
+                    <small class="form-help">Pixel format. "(auto)" is usually fine. Use yuv420p for broad compatibility. Ignored if video codec is "copy".</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="videoProfileOption" class="form-label">Video Profile</label>
+                    <select id="videoProfileOption" class="form-select">
+                        <option value="">(auto)</option>
+                        <option value="baseline">Baseline</option>
+                        <option value="main">Main</option>
+                        <option value="high">High</option>
+                        <option value="high10">High 10 (10-bit)</option>
+                        <option value="main10">Main 10 (10-bit, HEVC)</option>
+                        <!-- Add other relevant profiles as needed -->
+                    </select>
+                    <small class="form-help">H.264/H.265 profile. "(auto)" is usually fine. Ignored if video codec is "copy".</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="levelOption" class="form-label">Level</label>
+                    <select id="levelOption" class="form-select">
+                        <option value="">(auto)</option>
+                        <option value="3.0">3.0</option>
+                        <option value="3.1">3.1</option>
+                        <option value="3.2">3.2</option>
+                        <option value="4.0">4.0</option>
+                        <option value="4.1">4.1</option>
+                        <option value="4.2">4.2</option>
+                        <option value="5.0">5.0</option>
+                        <option value="5.1">5.1</option>
+                        <option value="5.2">5.2</option>
+                        <option value="6.0">6.0</option>
+                        <option value="6.1">6.1</option>
+                        <option value="6.2">6.2</option>
+                    </select>
+                    <small class="form-help">H.264/H.265 level. "(auto)" is usually fine. Ignored if video codec is "copy".</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="bfOption" class="form-label">B-frames (bf)</label>
+                    <select id="bfOption" class="form-select">
+                        <option value="">(auto)</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3 (Common Default)</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="8">8</option>
+                        <option value="16">16 (Max for H.264)</option>
+                    </select>
+                    <small class="form-help">Maximum number of B-frames. "(auto)" lets encoder decide. Ignored if video codec is "copy".</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="gopSizeOption" class="form-label">GOP size (g)</label>
+                    <input type="number" id="gopSizeOption" class="form-input" placeholder="e.g., 250 (auto)">
+                    <small class="form-help">Group of Pictures size (keyframe interval). Empty for auto. Ignored if video codec is "copy".</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="movflagsOption" class="form-label">Movflags</label>
+                    <select id="movflagsOption" class="form-select">
+                        <option value="">(none)</option>
+                        <option value="faststart">+faststart (for web streaming)</option>
+                        <option value="rtphint">+rtphint (for RTP streaming)</option>
+                        <option value="frag_keyframe+empty_moov">+frag_keyframe+empty_moov (for fragmented MP4)</option>
+                    </select>
+                    <small class="form-help">MP4-specific flags (movflags). E.g., +faststart moves metadata to the beginning. Not applicable to all containers.</small>
+                </div>
+
             </form>
-            
+
             <button type="button" id="generateBtn" class="btn-primary">
                 <span id="btnText">⚙️ Generate Scripts</span>
             </button>
@@ -667,7 +807,7 @@ body {
                 <div class="script-output">
                     <h3 class="script-title">🪟 Windows Batch Script</h3>
                     <p class="script-description">
-                        Save as <code>.bat</code> file (e.g., <code>convert_video.bat</code>). 
+                        Save as <code>.bat</code> file (e.g., <code>convert_video.bat</code>).
                         Drag and drop video files onto the script to convert them.
                     </p>
                     <textarea id="windowsScript" class="script-textarea" readonly placeholder="Windows batch script will appear here..."></textarea>
@@ -677,7 +817,7 @@ body {
                 <div class="script-output">
                     <h3 class="script-title">🐧 Linux/macOS Shell Script</h3>
                     <p class="script-description">
-                        Save as <code>.sh</code> file (e.g., <code>convert_video.sh</code>). 
+                        Save as <code>.sh</code> file (e.g., <code>convert_video.sh</code>).
                         Make executable with <code>chmod +x convert_video.sh</code>.
                     </p>
                     <textarea id="linuxScript" class="script-textarea" readonly placeholder="Linux/macOS shell script will appear here..."></textarea>
@@ -713,7 +853,17 @@ body {
             const videoCodecEl = document.getElementById('videoCodec');
             const videoCodecSelectEl = document.getElementById('videoCodecSelect');
             const audioCodecEl = document.getElementById('audioCodec');
-            const videoBitrateEl = document.getElementById('videoBitrate');
+            const audioCodecSelectEl = document.getElementById('audioCodecSelect');
+            const audioBitrateOptionEl = document.getElementById('audioBitrateOption');
+            const crfValueEl = document.getElementById('crfValue');
+            const presetOptionEl = document.getElementById('presetOption');
+            const pixelFormatOptionEl = document.getElementById('pixelFormatOption');
+            const videoProfileOptionEl = document.getElementById('videoProfileOption');
+            const levelOptionEl = document.getElementById('levelOption');
+            const bfOptionEl = document.getElementById('bfOption');
+            const gopSizeOptionEl = document.getElementById('gopSizeOption');
+            const movflagsOptionEl = document.getElementById('movflagsOption');
+
             const generateBtn = document.getElementById('generateBtn');
             const btnText = document.getElementById('btnText');
             const windowsScriptArea = document.getElementById('windowsScript');
@@ -722,22 +872,23 @@ body {
             const copyLinuxBtn = document.getElementById('copyLinuxBtn');
             const scriptsSection = document.getElementById('scriptsSection');
 
-            // Handle Video Codec Dropdown Selection
-            if (videoCodecSelectEl) {
-                videoCodecSelectEl.addEventListener('change', function() {
-                    const selectedValue = this.value;
-                    if (selectedValue) {
-                        videoCodecEl.value = selectedValue;
-                        videoCodecEl.focus();
-                        
-                        // Trigger input event to update label color
-                        videoCodecEl.dispatchEvent(new Event('input', { bubbles: true }));
-                        
-                        // Reset dropdown to default
-                        this.value = '';
-                    }
-                });
+            // Helper function to handle quick select for codecs
+            function setupCodecQuickSelect(textInputEl, selectInputEl) {
+                if (selectInputEl) {
+                    selectInputEl.addEventListener('change', function() {
+                        const selectedValue = this.value;
+                        if (selectedValue) {
+                            textInputEl.value = selectedValue;
+                            textInputEl.focus();
+                            textInputEl.dispatchEvent(new Event('input', { bubbles: true }));
+                            this.value = ''; // Reset select
+                        }
+                    });
+                }
             }
+
+            // setupCodecQuickSelect(videoCodecEl, videoCodecSelectEl); // Call for videoCodecSelectEl remains commented
+            setupCodecQuickSelect(audioCodecEl, audioCodecSelectEl); // Call for audioCodecSelectEl remains active
 
             // Generate FFMPEG Command
             function generateFfmpegCommand(params) {
@@ -747,19 +898,53 @@ body {
                 if (params.resolution) {
                     commandParts.push('-s', params.resolution);
                 }
-                
+
+                // Video Codec specific handling
+                const isVideoCopy = params.videoCodec.toLowerCase() === 'copy';
+
                 commandParts.push('-c:v', params.videoCodec || 'libx264');
+
+                if (!isVideoCopy) { // Parameters below are ignored if video is copied
+                    if (params.crf && !params.videoCodec.includes('nvenc') && !params.videoCodec.includes('videotoolbox')) { // CRF for software encoders
+                        commandParts.push('-crf', params.crf);
+                    }
+                    if (params.preset) {
+                        commandParts.push('-preset', params.preset);
+                    }
+                    if (params.pixelFormat) {
+                        commandParts.push('-pix_fmt', params.pixelFormat);
+                    }
+                    if (params.videoProfile) {
+                        commandParts.push('-profile:v', params.videoProfile);
+                    }
+                    if (params.level) {
+                        commandParts.push('-level:v', params.level); // -level:v is more specific
+                    }
+                    if (params.bf) {
+                        commandParts.push('-bf', params.bf);
+                    }
+                    if (params.gopSize) {
+                        commandParts.push('-g', params.gopSize);
+                    }
+                }
+
+                // Audio Codec specific handling
+                const isAudioCopy = params.audioCodec.toLowerCase() === 'copy';
                 commandParts.push('-c:a', params.audioCodec || 'aac');
 
-                if (params.bitrate) {
-                    commandParts.push('-b:v', params.bitrate);
+                if (!isAudioCopy && params.audioBitrate) { // Audio bitrate ignored if audio is copied
+                    commandParts.push('-b:a', params.audioBitrate);
+                }
+
+                if (params.movflags) {
+                    commandParts.push('-movflags', params.movflags);
                 }
 
                 commandParts.push('"$OUTPUT_FILE_REENCODED"');
                 return commandParts.join(' ');
             }
 
-            // Generate Windows Script
+            // Generate Windows Script (remains largely the same)
             function generateWindowsScript(ffmpegCommand) {
                 return `@echo off
 REM FFMPEG Video Conversion Script for Windows
@@ -802,7 +987,7 @@ FOR %%A IN (%*) DO (
     SET "FFMPEG_CMD=${ffmpegCommand}"
     SET "CMD_TEMP=!FFMPEG_CMD:"$INPUT_FILE"="%%~A"!"
     SET "FINAL_CMD=!CMD_TEMP:"$OUTPUT_FILE_REENCODED"="!OUTPUT_FILENAME!"!"
-    
+
     REM Execute conversion
     echo Executing: !FINAL_CMD!
     echo.
@@ -823,10 +1008,10 @@ echo.
 pause`;
             }
 
-            // Generate Linux Script
+            // Generate Linux Script (remains largely the same)
             function generateLinuxScript(ffmpegCommand) {
                 const escapedCommand = ffmpegCommand.replace(/`/g, '\\`');
-                
+
                 return `#!/bin/bash
 # FFMPEG Video Conversion Script for Linux/macOS
 # Usage: ./script.sh file1.mp4 file2.mkv ...
@@ -896,7 +1081,7 @@ for file in "$@"; do
 
    # Prepare FFMPEG command
    FFMPEG_COMMAND_TEMPLATE="${escapedCommand}"
-   
+
    # Replace placeholders safely
    CURRENT_FFMPEG_COMMAND="\${FFMPEG_COMMAND_TEMPLATE//\\"\\$INPUT_FILE\\"/\\"$file\\"}"
    CURRENT_FFMPEG_COMMAND="\${CURRENT_FFMPEG_COMMAND//\\"\\$OUTPUT_FILE_REENCODED\\"/\\"$OUTPUT_FILENAME\\"}"
@@ -910,7 +1095,7 @@ for file in "$@"; do
    else
        echo "✗ Error converting: \\"$FILENAME_WITH_EXT\\""
    fi
-   
+
    echo
    echo "----------------------------------------"
    echo
@@ -927,7 +1112,7 @@ echo`;
                        await navigator.clipboard.writeText(text);
                        button.innerHTML = '<span class="success">✓ Copied!</span>';
                        button.disabled = true;
-                       
+
                        setTimeout(() => {
                            button.innerHTML = originalText;
                            button.disabled = false;
@@ -942,7 +1127,7 @@ echo`;
                        textArea.select();
                        document.execCommand('copy');
                        document.body.removeChild(textArea);
-                       
+
                        button.innerHTML = '<span class="success">✓ Copied!</span>';
                        setTimeout(() => {
                            button.innerHTML = originalText;
@@ -982,9 +1167,9 @@ echo`;
            function showScriptsSection() {
                scriptsSection.style.display = 'block';
                setTimeout(() => {
-                   scriptsSection.scrollIntoView({ 
-                       behavior: 'smooth', 
-                       block: 'start' 
+                   scriptsSection.scrollIntoView({
+                       behavior: 'smooth',
+                       block: 'start'
                    });
                }, 100);
            }
@@ -992,45 +1177,62 @@ echo`;
            // Handle Generate Scripts
            function handleGenerateScripts() {
                showLoading();
-               
-               // Simulate processing delay for better UX
+
                setTimeout(() => {
                    const params = {
                        resolution: resolutionEl.value.trim(),
-                       videoCodec: videoCodecEl.value.trim(),
-                       audioCodec: audioCodecEl.value.trim(),
-                       bitrate: videoBitrateEl.value.trim()
+                       videoCodec: videoCodecEl.value.trim() || 'libx264',
+                       audioCodec: audioCodecEl.value.trim() || 'aac',
+                       audioBitrate: audioBitrateOptionEl.value,
+                       crf: crfValueEl.value.trim(),
+                       preset: presetOptionEl.value,
+                       pixelFormat: pixelFormatOptionEl.value,
+                       videoProfile: videoProfileOptionEl.value,
+                       level: levelOptionEl.value,
+                       bf: bfOptionEl.value,
+                       gopSize: gopSizeOptionEl.value.trim(),
+                       movflags: movflagsOptionEl.value
                    };
+
+                   // Validate CRF and GOP size (must be numbers if provided)
+                   if (params.crf && isNaN(parseFloat(params.crf))) {
+                       alert("CRF value must be a number.");
+                       hideLoading();
+                       return;
+                   }
+                   if (params.gopSize && (isNaN(parseInt(params.gopSize)) || parseInt(params.gopSize) <= 0)) {
+                       alert("GOP size must be a positive number.");
+                       hideLoading();
+                       return;
+                   }
 
                    console.log('Parameters:', params);
 
-                   // Generate FFMPEG command
                    const ffmpegCommand = generateFfmpegCommand(params);
                    console.log('FFMPEG Command:', ffmpegCommand);
 
-                   // Generate scripts
                    const windowsScript = generateWindowsScript(ffmpegCommand);
                    const linuxScript = generateLinuxScript(ffmpegCommand);
 
-                   // Update textareas
                    windowsScriptArea.value = windowsScript;
                    linuxScriptArea.value = linuxScript;
 
                    hideLoading();
                    showScriptsSection();
-               }, 800); // Small delay for better perceived performance
+               }, 800);
            }
 
            // Event Listeners
+           // /* // Temporarily remove the start of the main comment block
            if (generateBtn) {
                generateBtn.addEventListener('click', handleGenerateScripts);
            }
-
+           /* // Re-start comment block for subsequent listeners
            if (copyWindowsBtn) {
                copyWindowsBtn.addEventListener('click', () => {
                    copyToClipboard(
-                       windowsScriptArea.value, 
-                       copyWindowsBtn, 
+                       windowsScriptArea.value,
+                       copyWindowsBtn,
                        '📄 Copy Windows Script'
                    );
                });
@@ -1039,14 +1241,13 @@ echo`;
            if (copyLinuxBtn) {
                copyLinuxBtn.addEventListener('click', () => {
                    copyToClipboard(
-                       linuxScriptArea.value, 
-                       copyLinuxBtn, 
+                       linuxScriptArea.value,
+                       copyLinuxBtn,
                        '📄 Copy Linux Script'
                    );
                });
            }
 
-           // Allow Enter key to generate scripts
            document.addEventListener('keydown', (e) => {
                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                    e.preventDefault();
@@ -1054,7 +1255,6 @@ echo`;
                }
            });
 
-           // Add subtle parallax effect to hero section
            window.addEventListener('scroll', () => {
                const scrolled = window.pageYOffset;
                const hero = document.querySelector('.hero');
@@ -1062,25 +1262,37 @@ echo`;
                    hero.style.transform = `translateY(${scrolled * 0.1}px)`;
                }
            });
+           */
 
-           // Form validation and real-time feedback
-           const inputs = [resolutionEl, videoCodecEl, audioCodecEl, videoBitrateEl];
+           const inputs = [
+               resolutionEl, videoCodecEl, audioCodecEl, crfValueEl, gopSizeOptionEl,
+               audioBitrateOptionEl, presetOptionEl, pixelFormatOptionEl,
+               videoProfileOptionEl, levelOptionEl, bfOptionEl, movflagsOptionEl
+           ];
+           // /* // Remove surrounding comment
            inputs.forEach(input => {
                if (input) {
-                   input.addEventListener('input', (e) => {
-                       const value = e.target.value.trim();
-                       const label = e.target.previousElementSibling;
-                       
-                       if (value) {
-                           label.style.color = 'var(--apple-blue)';
-                       } else {
-                           label.style.color = 'var(--apple-black)';
+                   const eventType = (input.tagName === 'SELECT' || input.type === 'number') ? 'change' : 'input';
+                   input.addEventListener(eventType, (e) => {
+                       const label = document.querySelector(`label[for="${e.target.id}"]`);
+                       if (label) {
+                           if (e.target.value.trim() && e.target.value.trim() !== '(auto)' && e.target.value.trim() !== '(none)') {
+                               label.style.color = 'var(--apple-blue)';
+                           } else {
+                               label.style.color = 'var(--apple-black)'; // Or your default label color
+                           }
                        }
                    });
+                   // Initial check in case of pre-filled values
+                   if (input.value.trim() && input.value.trim() !== '(auto)' && input.value.trim() !== '(none)') {
+                        const label = document.querySelector(`label[for="${input.id}"]`);
+                        if (label) label.style.color = 'var(--apple-blue)';
+                   }
                }
            });
+           // */ // Remove surrounding comment
 
-           console.log('FFMPEG Script Generator initialized successfully!');
+           console.log('FFMPEG Script Generator initialized successfully with all features!');
        });
    </script>
 </body>
