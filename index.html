@@ -131,6 +131,18 @@
                     <label for="level">Level:</label>
                     <input type="text" id="level" placeholder="e.g., 4.1">
                 </div>
+                <div class="input-group">
+                    <label for="crf">CRF Value:</label>
+                    <input type="text" id="crf" placeholder="e.g., 23">
+                </div>
+                <div class="input-group">
+                    <label for="pix_fmt">Pixel Format:</label>
+                    <input type="text" id="pix_fmt" placeholder="e.g., yuv420p">
+                </div>
+                <div class="input-group">
+                    <label for="hwaccel">Hardware Acceleration:</label>
+                    <input type="text" id="hwaccel" placeholder="e.g., cuda">
+                </div>
             </div>
         </div>
 
@@ -168,11 +180,21 @@
                     <label for="af">Audio Filters:</label>
                     <input type="text" id="af" placeholder="e.g., volume=2.0">
                 </div>
+                <div class="input-group">
+                    <label for="filter_complex">Advanced Filters (filter_complex):</label>
+                    <input type="text" id="filter_complex" placeholder="e.g., [0:v][1:v]overlay">
+                </div>
             </div>
         </div>
 
         <!-- Resulting script -->
         <textarea id="generated-script" readonly placeholder="Generated batch script will appear here..."></textarea>
+
+        <!-- Output File Suffix -->
+        <div class="input-group">
+            <label for="suffix">Output File Suffix:</label>
+            <input type="text" id="suffix" placeholder="e.g., _customSuffix" value="_reencoded">
+        </div>
 
         <!-- Save and Load buttons -->
         <button id="save-config">Save Configuration</button>
@@ -186,39 +208,48 @@
     </div>
 
     <script>
-        // JavaScript to handle foldable sections
         const toggleSection = (sectionId) => {
             const section = document.getElementById(sectionId);
             section.classList.toggle('hidden');
         };
 
-        // Ensure sections are opened by default on page load
         window.onload = () => {
             document.getElementById('video-settings').classList.remove('hidden');
             document.getElementById('audio-settings').classList.remove('hidden');
         };
 
-        // Existing script generation logic
-        const vcodecDropdown = document.getElementById('vcodec');
-        const vbInput = document.getElementById('vb');
-        const framerateInput = document.getElementById('framerate');
-        const vfInput = document.getElementById('vf');
-        const aspectInput = document.getElementById('aspect');
-        const presetInput = document.getElementById('preset');
-        const profileInput = document.getElementById('profile');
-        const levelInput = document.getElementById('level');
-
-        const acodecDropdown = document.getElementById('acodec');
-        const abInput = document.getElementById('ab');
-        const arInput = document.getElementById('ar');
-        const acInput = document.getElementById('ac');
-        const volInput = document.getElementById('vol');
-        const afInput = document.getElementById('af');
-        const generatedScript = document.getElementById('generated-script');
-
         const addParameter = (flag, value) => value ? `${flag} ${value}` : '';
 
         const updateScript = () => {
+            const suffixInput = document.getElementById('suffix');
+            const crfInput = document.getElementById('crf');
+            const pixFmtInput = document.getElementById('pix_fmt');
+            const hwaccelInput = document.getElementById('hwaccel');
+            const filterComplexInput = document.getElementById('filter_complex');
+
+            const suffix = suffixInput.value || '_reencoded';
+            const crf = addParameter('-crf', crfInput.value);
+            const pixFmt = addParameter('-pix_fmt', pixFmtInput.value);
+            const hwaccel = addParameter('-hwaccel', hwaccelInput.value);
+            const filterComplex = addParameter('-filter_complex', filterComplexInput.value);
+
+            const vcodecDropdown = document.getElementById('vcodec');
+            const vbInput = document.getElementById('vb');
+            const framerateInput = document.getElementById('framerate');
+            const vfInput = document.getElementById('vf');
+            const aspectInput = document.getElementById('aspect');
+            const presetInput = document.getElementById('preset');
+            const profileInput = document.getElementById('profile');
+            const levelInput = document.getElementById('level');
+
+            const acodecDropdown = document.getElementById('acodec');
+            const abInput = document.getElementById('ab');
+            const arInput = document.getElementById('ar');
+            const acInput = document.getElementById('ac');
+            const volInput = document.getElementById('vol');
+            const afInput = document.getElementById('af');
+            const generatedScript = document.getElementById('generated-script');
+
             const vcodec = addParameter('-c:v', vcodecDropdown.value);
             const vb = addParameter('-b:v', vbInput.value);
             const framerate = addParameter('-r', framerateInput.value);
@@ -240,65 +271,13 @@
 setlocal enabledelayedexpansion
 
 for %%F in (*.*) do (
-    ffmpeg -i "%%F" ${vcodec} ${vb} ${framerate} ${vf} ${aspect} ${preset} ${profile} ${level} ${acodec} ${ab} ${ar} ${ac} ${vol} ${af} "output_%%~nF.mp4"
+    ffmpeg -i "%%F" ${vcodec} ${vb} ${framerate} ${vf} ${aspect} ${preset} ${profile} ${level} ${acodec} ${ab} ${ar} ${ac} ${vol} ${af} ${crf} ${pixFmt} ${hwaccel} ${filterComplex} "%%~nF${suffix}.mp4"
 )
             `.trim();
         };
 
-        [vcodecDropdown, vbInput, framerateInput, vfInput, aspectInput, presetInput, profileInput, levelInput,
-         acodecDropdown, abInput, arInput, acInput, volInput, afInput].forEach(element => {
-            element.addEventListener('input', updateScript);
-        });
-
-        document.getElementById('save-config').addEventListener('click', () => {
-            const config = {
-                vcodec: vcodecDropdown.value,
-                vb: vbInput.value,
-                framerate: framerateInput.value,
-                vf: vfInput.value,
-                aspect: aspectInput.value,
-                preset: presetInput.value,
-                profile: profileInput.value,
-                level: levelInput.value,
-                acodec: acodecDropdown.value,
-                ab: abInput.value,
-                ar: arInput.value,
-                acInput: acInput.value,
-                volInput: volInput.value,
-                afInput: afInput.value
-            };
-            localStorage.setItem('ffmpegConfig', JSON.stringify(config));
-            alert('Configuration Saved!');
-        });
-
-        document.getElementById('load-config').addEventListener('click', () => {
-            const config = JSON.parse(localStorage.getItem('ffmpegConfig'));
-            if (config) {
-                vcodecDropdown.value = config.vcodec;
-                vbInput.value = config.vb;
-                framerateInput.value = config.framerate;
-                vfInput.value = config.vf;
-                aspectInput.value = config.aspect;
-                presetInput.value = config.preset;
-                profileInput.value = config.profile;
-                levelInput.value = config.level;
-                acodecDropdown.value = config.acodec;
-                abInput.value = config.ab;
-                arInput.value = config.ar;
-                acInput.value = config.ac;
-                volInput.value = config.vol;
-                afInput.value = config.af;
-                updateScript();
-                alert('Configuration Loaded!');
-            } else {
-                alert('No configuration found!');
-            }
-        });
-
-        window.addEventListener('load', () => {
-            if (!navigator.onLine) {
-                document.body.classList.add('offline');
-            }
+        [document.getElementById('suffix'), document.getElementById('crf'), document.getElementById('pix_fmt'), document.getElementById('hwaccel'), document.getElementById('filter_complex')].forEach(input => {
+            input.addEventListener('input', updateScript);
         });
     </script>
 </body>
